@@ -62,7 +62,7 @@ public sealed class GasTileFireOverlay : Overlay
         for (var i = 0; i < FireStates; i++)
         {
             if (!fire.TryGetState((i + 1).ToString(), out var state))
-                throw new ArgumentOutOfRangeException($"Fire RSI doesn't have state \"{i}\"!");
+                throw new InvalidOperationException($"Fire RSI doesn't have state \"{i + 1}\"!");
 
             _frames[i] = state.GetFrames(RsiDirection.South);
             _frameDelays[i] = state.GetDelays();
