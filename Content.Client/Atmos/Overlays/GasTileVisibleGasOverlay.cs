@@ -80,7 +80,8 @@ public sealed class GasTileVisibleGasOverlay : Overlay
             else if (!string.IsNullOrEmpty(gasPrototype.GasOverlayTexture))
                 overlay = new SpriteSpecifier.Texture(new(gasPrototype.GasOverlayTexture));
             else
-                continue;
+                throw new InvalidOperationException(
+                    $"Visible gas '{_gasTileOverlaySystem.VisibleGasId[i]}' has no overlay asset configured.");
 
             switch (overlay)
             {
@@ -89,7 +90,8 @@ public sealed class GasTileVisibleGasOverlay : Overlay
                     var stateId = animated.RsiState;
 
                     if (!rsi.TryGetState(stateId, out var state))
-                        continue;
+                        throw new InvalidOperationException(
+                            $"Gas overlay state '{stateId}' was not found in '{gasPrototype.GasOverlaySprite}'.");
 
                     _frames[i] = state.GetFrames(RsiDirection.South);
                     _frameDelays[i] = state.GetDelays();

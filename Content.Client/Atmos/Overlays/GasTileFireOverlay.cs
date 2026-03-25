@@ -150,7 +150,7 @@ public sealed class GasTileFireOverlay : Overlay
 
                     while (enumerator.MoveNext(out var gas))
                     {
-                        if (gas.FireState == 0)
+                        if (gas.FireState == 0 || gas.FireState > FireStates)
                             continue;
 
                         var index = chunk.Origin + (enumerator.X, enumerator.Y);
