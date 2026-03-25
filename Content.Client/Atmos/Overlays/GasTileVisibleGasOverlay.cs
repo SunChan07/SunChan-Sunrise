@@ -18,7 +18,7 @@ using DrawDepth = Content.Shared.DrawDepth.DrawDepth;
 namespace Content.Client.Atmos.Overlays;
 
 /// <summary>
-/// Overlay responsible for rendering visible atmos gasses (like plasma for example) usin.
+/// Overlay responsible for rendering visible atmos gasses (like plasma for example).
 /// </summary>
 public sealed class GasTileVisibleGasOverlay : Overlay
 {
