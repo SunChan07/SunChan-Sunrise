@@ -241,8 +241,6 @@ public sealed class GasTileVisibleGasOverlay : Overlay
                                     Color.White.WithAlpha(opacity / 255f * 0.4f));
                             }
                         }
-                            }
-                        }
                     }
                 }
 
