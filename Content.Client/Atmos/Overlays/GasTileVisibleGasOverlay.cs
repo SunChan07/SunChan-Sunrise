@@ -27,7 +27,6 @@ public sealed class GasTileVisibleGasOverlay : Overlay
     [Dependency] private readonly IPrototypeManager _protoManager = default!;
     [Dependency] private readonly IMapManager _mapManager = default!;
 
-    private static readonly ProtoId<ShaderPrototype> UnshadedShader = "unshaded";
     // Sunrise edit: gas indices that should never be rendered (transparent gases)
     private static readonly HashSet<Gas> TransparentGases = new()
     {
@@ -46,7 +45,6 @@ public sealed class GasTileVisibleGasOverlay : Overlay
     private readonly SpriteSystem _spriteSystem;
 
     public override OverlaySpace Space => OverlaySpace.WorldSpaceEntities | OverlaySpace.WorldSpaceBelowWorld;
-    private readonly ShaderInstance _shader;
 
     // Gas overlays
     private readonly float[] _timer;
@@ -69,7 +67,6 @@ public sealed class GasTileVisibleGasOverlay : Overlay
         _gasTileOverlaySystem = _entManager.System<SharedGasTileOverlaySystem>();
         _spriteSystem = _entManager.System<SpriteSystem>();
 
-        _shader = _protoManager.Index(UnshadedShader).Instance();
         ZIndex = GasOverlayZIndex;
 
         _gasCount = _gasTileOverlaySystem.VisibleGasId.Length;
@@ -156,7 +153,6 @@ public sealed class GasTileVisibleGasOverlay : Overlay
             _gasCount,
             _frames,
             _frameCounter,
-            _shader,
             overlayQuery,
             xformQuery,
             _xformSys,
@@ -167,9 +163,7 @@ public sealed class GasTileVisibleGasOverlay : Overlay
         // Sunrise edit
         if (_entManager.TryGetComponent<MapAtmosphereComponent>(mapUid, out var atmos))
         {
-            drawHandle.UseShader(_shader);
             DrawMapOverlay(drawHandle, args, mapUid, atmos);
-            drawHandle.UseShader(null);
         }
         // Sunrise edit
         if (args.Space != OverlaySpace.WorldSpaceEntities)
@@ -186,7 +180,6 @@ public sealed class GasTileVisibleGasOverlay : Overlay
                     int gasCount,
                     Texture[][] frames,
                     int[] frameCounter,
-                    ShaderInstance shader,
                     EntityQuery<GasTileOverlayComponent> overlayQuery,
                     EntityQuery<TransformComponent> xformQuery,
                     SharedTransformSystem xformSys,
@@ -211,7 +204,6 @@ public sealed class GasTileVisibleGasOverlay : Overlay
                 // ever moved to a single atlas, that should no longer be the case. So this is just grouping draw calls
                 // by chunk, even though its currently slower.
 
-                state.drawHandle.UseShader(state.shader); // Sunrise edit
                 foreach (var chunk in comp.Chunks.Values)
                 {
                     var enumerator = new GasChunkEnumerator(chunk);
@@ -247,7 +239,6 @@ public sealed class GasTileVisibleGasOverlay : Overlay
                 return true;
             });
 
-        drawHandle.UseShader(null);
         drawHandle.SetTransform(Matrix3x2.Identity);
     }
 
