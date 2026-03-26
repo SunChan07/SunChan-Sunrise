@@ -149,12 +149,11 @@ public sealed class GasTileVisibleGasOverlay : Overlay
 
         // Sunrise edit
         if (_entManager.TryGetComponent<MapAtmosphereComponent>(mapUid, out var atmos))
-            if (_entManager.TryGetComponent<MapAtmosphereComponent>(mapUid, out var atmos))
-            {
-                drawHandle.UseShader(_shader);
-                DrawMapOverlay(drawHandle, args, mapUid, atmos);
-                drawHandle.UseShader(null);
-            }
+        {
+            drawHandle.UseShader(_shader);
+            DrawMapOverlay(drawHandle, args, mapUid, atmos);
+            drawHandle.UseShader(null);
+        }
         // Sunrise edit
         if (args.Space != OverlaySpace.WorldSpaceEntities)
             return;

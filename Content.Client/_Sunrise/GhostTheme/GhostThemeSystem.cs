@@ -33,7 +33,7 @@ public sealed class GhostThemeSystem: EntitySystem
             sprite.LayerSetScale(layer, ghostThemePrototype.Scale);
         }
 
-        sprite.DrawDepth = DrawDepth.Default + 11;
+        sprite.DrawDepth = DrawDepth.Default + 12;
         sprite.OverrideContainerOcclusion = true;
         sprite.NoRotation = true;
     }
