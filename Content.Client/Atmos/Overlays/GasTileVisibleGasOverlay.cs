@@ -230,7 +230,7 @@ public sealed class GasTileVisibleGasOverlay : Overlay
                                 // Sunrise edit: reduce gas brightness to 40%
                                 state.drawHandle.DrawTexture(state.frames[i][state.frameCounter[i]],
                                     tilePosition,
-                                    Color.White.WithAlpha(opacity / 255f * 0.4f));
+                                    Color.White.WithAlpha(opacity / 255f * 0.6f));
                             }
                         }
                     }
@@ -278,7 +278,7 @@ public sealed class GasTileVisibleGasOverlay : Overlay
 
                     if (opacity > 0)
                         // Sunrise edit: reduce gas brightness to 40%
-                        handle.DrawTexture(_frames[i][_frameCounter[i]], tilePosition, Color.White.WithAlpha(opacity / 255f * 0.4f));
+                        handle.DrawTexture(_frames[i][_frameCounter[i]], tilePosition, Color.White.WithAlpha(opacity / 255f * 0.6f));
                 }
             }
         }
