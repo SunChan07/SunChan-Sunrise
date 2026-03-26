@@ -37,7 +37,7 @@ public sealed class GasTileOverlaySystem : SharedGasTileOverlaySystem
             case GasTileOverlayState state:
             {
                 modifiedChunks = state.Chunks;
-                foreach (var index in comp.Chunks.Keys)
+                foreach (var index in comp.Chunks.Keys.ToArray()) // Sunrise edit
                 {
                     if (!state.Chunks.ContainsKey(index))
                         comp.Chunks.Remove(index);
