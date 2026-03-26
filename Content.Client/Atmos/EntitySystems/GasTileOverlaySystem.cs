@@ -3,6 +3,7 @@ using Content.Shared.Atmos.Components;
 using Content.Shared.Atmos.EntitySystems;
 using JetBrains.Annotations;
 using Robust.Shared.GameStates;
+using System.Linq;
 
 namespace Content.Client.Atmos.EntitySystems;
 
