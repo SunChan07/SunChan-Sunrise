@@ -28,6 +28,16 @@ public sealed class GasTileVisibleGasOverlay : Overlay
     [Dependency] private readonly IMapManager _mapManager = default!;
 
     private static readonly ProtoId<ShaderPrototype> UnshadedShader = "unshaded";
+    // Sunrise edit: gas indices that should never be rendered (transparent gases)
+    private static readonly HashSet<Gas> TransparentGases = new()
+    {
+        Gas.Oxygen,
+        Gas.Nitrogen,
+        Gas.CarbonDioxide,
+        Gas.NitrousOxide,
+    };
+
+    private readonly bool[] _isTransparent;
 
     private readonly SharedAtmosphereSystem _atmosphereSystem;
     private readonly SharedMapSystem _mapSystem;
@@ -67,6 +77,12 @@ public sealed class GasTileVisibleGasOverlay : Overlay
         _frameDelays = new float[_gasCount][];
         _frameCounter = new int[_gasCount];
         _frames = new Texture[_gasCount][];
+        // Sunrise edit: precompute which visible gas indices are transparent (should be skipped in rendering)
+        _isTransparent = new bool[_gasCount];
+        for (var i = 0; i < _gasCount; i++)
+        {
+            _isTransparent[i] = TransparentGases.Contains((Gas)_gasTileOverlaySystem.VisibleGasId[i]);
+        }
 
         for (var i = 0; i < _gasCount; i++)
         {
@@ -143,7 +159,8 @@ public sealed class GasTileVisibleGasOverlay : Overlay
             _shader,
             overlayQuery,
             xformQuery,
-            _xformSys);
+            _xformSys,
+            _isTransparent); // Sunrise edit
 
         var mapUid = _mapSystem.GetMapOrInvalid(args.MapId);
 
@@ -172,7 +189,8 @@ public sealed class GasTileVisibleGasOverlay : Overlay
                     ShaderInstance shader,
                     EntityQuery<GasTileOverlayComponent> overlayQuery,
                     EntityQuery<TransformComponent> xformQuery,
-                    SharedTransformSystem xformSys) state) =>
+                    SharedTransformSystem xformSys,
+                    bool[] isTransparent) state) => // Sunrise edit
             {
                 if (!state.overlayQuery.TryGetComponent(uid, out var comp) ||
                     !state.xformQuery.TryGetComponent(uid, out var gridXform))
@@ -207,14 +225,22 @@ public sealed class GasTileVisibleGasOverlay : Overlay
                         if (!localBounds.Contains(tilePosition))
                             continue;
 
+                        // Sunrise edit:
                         for (var i = 0; i < state.gasCount; i++)
                         {
+                            // Sunrise edit: skip transparent gases (O2, N2, CO2, N2O)
+                            if (state.isTransparent[i])
+                                continue;
+
                             var opacity = gas.Opacity[i];
                             if (opacity > 0)
                             {
+                                // Sunrise edit: reduce gas brightness to 40%
                                 state.drawHandle.DrawTexture(state.frames[i][state.frameCounter[i]],
                                     tilePosition,
-                                    Color.White.WithAlpha(opacity));
+                                    Color.White.WithAlpha(opacity / 255f * 0.4f));
+                            }
+                        }
                             }
                         }
                     }
@@ -252,12 +278,18 @@ public sealed class GasTileVisibleGasOverlay : Overlay
             {
                 var tilePosition = new Vector2(x, y);
 
+                // Sunrise edit
                 for (var i = 0; i < atmos.OverlayData.Opacity.Length; i++)
                 {
+                    // Sunrise edit: skip transparent gases (O2, N2, CO2, N2O)
+                    if (_isTransparent[i])
+                        continue;
+
                     var opacity = atmos.OverlayData.Opacity[i];
 
                     if (opacity > 0)
-                        handle.DrawTexture(_frames[i][_frameCounter[i]], tilePosition, Color.White.WithAlpha(opacity));
+                        // Sunrise edit: reduce gas brightness to 40%
+                        handle.DrawTexture(_frames[i][_frameCounter[i]], tilePosition, Color.White.WithAlpha(opacity / 255f * 0.4f));
                 }
             }
         }
