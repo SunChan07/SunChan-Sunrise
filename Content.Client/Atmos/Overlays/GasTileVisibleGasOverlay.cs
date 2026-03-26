@@ -81,7 +81,7 @@ public sealed class GasTileVisibleGasOverlay : Overlay
                 overlay = new SpriteSpecifier.Texture(new(gasPrototype.GasOverlayTexture));
             else
                 throw new InvalidOperationException(
-                    $"Visible gas '{_gasTileOverlaySystem.VisibleGasId[i]}' has no overlay asset configured.");
+                    $"Visible gas '{_gasTileOverlaySystem.VisibleGasId[i]}' has no overlay asset configured."); // Sunrise edit
 
             switch (overlay)
             {
@@ -91,7 +91,7 @@ public sealed class GasTileVisibleGasOverlay : Overlay
 
                     if (!rsi.TryGetState(stateId, out var state))
                         throw new InvalidOperationException(
-                            $"Gas overlay state '{stateId}' was not found in '{gasPrototype.GasOverlaySprite}'.");
+                            $"Gas overlay state '{stateId}' was not found in '{gasPrototype.GasOverlaySprite}'."); // Sunrise edit
 
                     _frames[i] = state.GetFrames(RsiDirection.South);
                     _frameDelays[i] = state.GetDelays();
@@ -147,9 +147,15 @@ public sealed class GasTileVisibleGasOverlay : Overlay
 
         var mapUid = _mapSystem.GetMapOrInvalid(args.MapId);
 
+        // Sunrise edit
         if (_entManager.TryGetComponent<MapAtmosphereComponent>(mapUid, out var atmos))
-            DrawMapOverlay(drawHandle, args, mapUid, atmos);
-
+            if (_entManager.TryGetComponent<MapAtmosphereComponent>(mapUid, out var atmos))
+            {
+                drawHandle.UseShader(_shader);
+                DrawMapOverlay(drawHandle, args, mapUid, atmos);
+                drawHandle.UseShader(null);
+            }
+        // Sunrise edit
         if (args.Space != OverlaySpace.WorldSpaceEntities)
             return;
 
@@ -188,7 +194,7 @@ public sealed class GasTileVisibleGasOverlay : Overlay
                 // ever moved to a single atlas, that should no longer be the case. So this is just grouping draw calls
                 // by chunk, even though its currently slower.
 
-                state.drawHandle.UseShader(null);
+                state.drawHandle.UseShader(state.shader); // Sunrise edit
                 foreach (var chunk in comp.Chunks.Values)
                 {
                     var enumerator = new GasChunkEnumerator(chunk);
