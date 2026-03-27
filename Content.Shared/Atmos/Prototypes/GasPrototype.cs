@@ -91,7 +91,7 @@ namespace Content.Shared.Atmos.Prototypes
         /// oxidizer is present.
         /// </summary>
         [DataField]
-        public bool IsFuel;Expand commentComment on lines R87 to R94
+        public bool IsFuel;
 
         /// <summary>
         /// Whether the gas is considered to be an oxidizer.
