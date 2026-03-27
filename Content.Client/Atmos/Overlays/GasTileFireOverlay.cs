@@ -1,7 +1,6 @@
 ﻿using Content.Client.Atmos.EntitySystems;
 using Content.Shared.Atmos;
 using Content.Shared.Atmos.Components;
-using Content.Shared.Species;
 using Robust.Client.GameObjects;
 using Robust.Client.Graphics;
 using Robust.Client.ResourceManagement;
@@ -29,7 +28,6 @@ public sealed class GasTileFireOverlay : Overlay
     private static readonly ProtoId<ShaderPrototype> UnshadedShader = "unshaded";
 
     private readonly SharedTransformSystem _xformSys;
-    private readonly SharedMapSystem _mapSystem = default!;
     private readonly ShaderInstance _shader;
 
     private readonly float[] _timer;
@@ -48,7 +46,6 @@ public sealed class GasTileFireOverlay : Overlay
     {
         IoCManager.InjectDependencies(this);
         _xformSys = _entManager.System<SharedTransformSystem>();
-        _mapSystem = _entManager.System<SharedMapSystem>();
         _shader = _protoMan.Index(UnshadedShader).Instance();
         ZIndex = GasOverlayZIndex;
 
@@ -106,8 +103,6 @@ public sealed class GasTileFireOverlay : Overlay
             overlayQuery,
             xformQuery,
             _xformSys);
-
-        var mapUid = _mapSystem.GetMapOrInvalid(args.MapId);
 
         if (args.Space != OverlaySpace.WorldSpaceEntities)
             return;
