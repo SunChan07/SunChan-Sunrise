@@ -4,9 +4,13 @@ using Content.Shared.CCVar;
 using JetBrains.Annotations;
 
 namespace Content.Shared.Atmos.EntitySystems;
-
-public abstract partial class SharedAtmosphereSystem
+public abstract partial class SharedAtmosphereSystem : EntitySystem
 {
+    [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
+    [Dependency] private readonly SharedInternalsSystem _internals = default!;
+
+    private EntityQuery<InternalsComponent> _internalsQuery;
+
     /*
      Partial class for operations involving GasMixtures.
 
