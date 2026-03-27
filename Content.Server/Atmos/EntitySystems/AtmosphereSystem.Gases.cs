@@ -323,6 +323,7 @@ namespace Content.Server.Atmos.EntitySystems
         {
             if (mix1.TotalMoles <= 0f || mix1.Temperature <= 0f || targetPressure <= mix2.Pressure)
                 return 0f;
+
             var molesToTransfer = MolesToMaxPressure(mix1, mix2, targetPressure);
             return molesToTransfer / mix1.TotalMoles;
         }

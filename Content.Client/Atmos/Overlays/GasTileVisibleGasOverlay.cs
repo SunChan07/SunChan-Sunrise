@@ -24,7 +24,6 @@ public sealed class GasTileVisibleGasOverlay : Overlay
 {
     [Dependency] private readonly IEntityManager _entManager = default!;
     [Dependency] private readonly IResourceCache _resourceCache = default!;
-    [Dependency] private readonly IPrototypeManager _protoManager = default!;
     [Dependency] private readonly IMapManager _mapManager = default!;
 
     // Sunrise edit: gas indices that should never be rendered (transparent gases)
