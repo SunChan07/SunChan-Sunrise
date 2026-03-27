@@ -22,7 +22,6 @@ namespace Content.Shared.Atmos.EntitySystems
 
             InitializeBreathTool();
             InitializeGases();
-            InitializeCVars();
         }
 
         public GasPrototype GetGas(int gasId) => GasPrototypes[gasId];
