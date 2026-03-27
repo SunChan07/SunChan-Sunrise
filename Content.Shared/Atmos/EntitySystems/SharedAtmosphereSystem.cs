@@ -23,6 +23,7 @@ namespace Content.Shared.Atmos.EntitySystems
             _internalsQuery = GetEntityQuery<InternalsComponent>();
 
             InitializeBreathTool();
+            InitializeGases();
 
             foreach (var gas in Enum.GetValues<Gas>())
             {
