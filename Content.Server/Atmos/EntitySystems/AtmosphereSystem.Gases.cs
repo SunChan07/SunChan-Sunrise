@@ -321,6 +321,8 @@ namespace Content.Server.Atmos.EntitySystems
         [PublicAPI]
         public static float FractionToMaxPressure(GasMixture mix1, GasMixture mix2, float targetPressure)
         {
+            if (mix1.TotalMoles <= 0f || mix1.Temperature <= 0f || targetPressure <= mix2.Pressure)
+                return 0f;
             var molesToTransfer = MolesToMaxPressure(mix1, mix2, targetPressure);
             return molesToTransfer / mix1.TotalMoles;
         }
@@ -341,6 +343,9 @@ namespace Content.Server.Atmos.EntitySystems
         [PublicAPI]
         public static float MolesToMaxPressure(GasMixture mix1, GasMixture mix2, float targetPressure)
         {
+            if (mix1.TotalMoles <= 0f || mix1.Temperature <= 0f || targetPressure <= mix2.Pressure)
+                return 0f;
+
             /*
              Calculate the moles required to reach the target pressure.
              The formula is derived from the ideal gas law and the
@@ -381,10 +386,7 @@ namespace Content.Server.Atmos.EntitySystems
              */
 
             var delta = targetPressure - mix2.Pressure;
-            var requiredMoles = (delta * mix2.Volume) / (mix1.Temperature * Atmospherics.R);
-
-            // Return the fraction of moles to transfer.
-            return requiredMoles;
+            return (delta * mix2.Volume) / (mix1.Temperature * Atmospherics.R);
         }
 
         /// <summary>

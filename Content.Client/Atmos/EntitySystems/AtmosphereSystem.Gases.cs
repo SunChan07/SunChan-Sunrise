@@ -19,8 +19,7 @@ public sealed partial class AtmosphereSystem
     /// Don't call it. Smile.</remarks>
     public override ReactionResult React(GasMixture mixture, IGasMixtureHolder? holder)
     {
-        // Reactions don't work on client so don't even try.
-        throw new NotImplementedException();
+        return ReactionResult.NoReaction;
     }
 
     public override bool IsMixtureFuel(GasMixture mixture, float epsilon = Atmospherics.Epsilon)
