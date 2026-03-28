@@ -10,6 +10,8 @@ namespace Content.Client.Atmos.EntitySystems
     [UsedImplicitly]
     internal sealed class AtmosDebugOverlaySystem : SharedAtmosDebugOverlaySystem
     {
+        [Dependency] private readonly IOverlayManager _overlayMan = default!;
+
         public readonly Dictionary<EntityUid, AtmosDebugOverlayMessage> TileData = new();
 
         // Configuration set by debug commands and used by AtmosDebugOverlay {
@@ -34,10 +36,7 @@ namespace Content.Client.Atmos.EntitySystems
             SubscribeNetworkEvent<AtmosDebugOverlayDisableMessage>(HandleAtmosDebugOverlayDisableMessage);
 
             SubscribeLocalEvent<GridRemovalEvent>(OnGridRemoved);
-
-            var overlayManager = IoCManager.Resolve<IOverlayManager>();
-            if(!overlayManager.HasOverlay<AtmosDebugOverlay>())
-                overlayManager.AddOverlay(new AtmosDebugOverlay(this));
+            _overlayMan.AddOverlay(new AtmosDebugOverlay(this));
         }
 
         private void OnGridRemoved(GridRemovalEvent ev)
@@ -61,9 +60,7 @@ namespace Content.Client.Atmos.EntitySystems
         public override void Shutdown()
         {
             base.Shutdown();
-            var overlayManager = IoCManager.Resolve<IOverlayManager>();
-            if (overlayManager.HasOverlay<AtmosDebugOverlay>())
-                overlayManager.RemoveOverlay<AtmosDebugOverlay>();
+            _overlayMan.RemoveOverlay<AtmosDebugOverlay>();
         }
 
         public void Reset(RoundRestartCleanupEvent ev)
