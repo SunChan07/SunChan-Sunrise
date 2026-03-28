@@ -41,9 +41,18 @@ namespace Content.Server.Sandbox
             set
             {
                 _isSandboxEnabled = value;
-                    if (!value)
-                        ClearAllSandboxThermalVision();ClearAllSandboxThermalVision;
+        [ViewVariables(VVAccess.ReadWrite)]
+        public bool IsSandboxEnabled
+        {
+            get => _isSandboxEnabled;
+            set
+            {
+                _isSandboxEnabled = value;
+                if (!value)
+                    ClearAllSandboxThermalVision();
                 UpdateSandboxStatusForAll();
+            }
+        }
             }
         }
 
