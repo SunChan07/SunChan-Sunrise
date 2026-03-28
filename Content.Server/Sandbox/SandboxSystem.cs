@@ -16,6 +16,7 @@ using Robust.Shared.Enums;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Content.Shared._Sunrise.ThermalVision;
+using Content.Shared._Sunrise.Sandbox;
 
 namespace Content.Server.Sandbox
 {
@@ -40,6 +41,8 @@ namespace Content.Server.Sandbox
             set
             {
                 _isSandboxEnabled = value;
+                    if (!value)
+                        ClearAllSandboxThermalVision();ClearAllSandboxThermalVision;
                 UpdateSandboxStatusForAll();
             }
         }
@@ -101,19 +104,47 @@ SubscribeNetworkEvent<MsgSandboxThermalVision>(SandboxThermalVisionHandler);
         }
 
         private void SandboxThermalVisionHandler(MsgSandboxThermalVision msg, EntitySessionEventArgs args)
-{
-    if (!IsSandboxEnabled)
-        return;
+        {
+            if (!IsSandboxEnabled)
+                return;
 
-    var player = args.SenderSession.AttachedEntity;
-    if (player is null)
-        return;
+            var player = args.SenderSession.AttachedEntity;
+            if (player is null)
+                return;
 
-    if (HasComp<ThermalVisionComponent>(player.Value))
-        RemComp<ThermalVisionComponent>(player.Value);
-    else
-        EnsureComp<ThermalVisionComponent>(player.Value);
-}            
+            if (HasComp<SandboxThermalVisionMarkerComponent>(player.Value))
+                RemComp<SandboxThermalVisionMarkerComponent>(player.Value);
+            else
+                EnsureComp<SandboxThermalVisionMarkerComponent>(player.Value);
+
+            SyncThermalVision(player.Value);
+        }
+
+        /// <summary>
+        /// Reconciles ThermalVisionComponent with the sandbox marker.
+        /// Adds ThermalVisionComponent when the marker is present; removes it when absent.
+        /// </summary>
+        private void SyncThermalVision(EntityUid player)
+        {
+            if (HasComp<SandboxThermalVisionMarkerComponent>(player))
+                EnsureComp<ThermalVisionComponent>(player);
+            else
+                RemCompDeferred<ThermalVisionComponent>(player);
+        }
+
+        /// <summary>
+        /// Removes sandbox thermal vision markers and ThermalVisionComponent
+        /// from all players — called when sandbox is disabled or the round resets.
+        /// </summary>
+        private void ClearAllSandboxThermalVision()
+        {
+            var query = EntityQueryEnumerator<SandboxThermalVisionMarkerComponent>();
+            while (query.MoveNext(out var uid, out _))
+            {
+                RemComp<SandboxThermalVisionMarkerComponent>(uid);
+                RemCompDeferred<ThermalVisionComponent>(uid);
+            }
+        } 
 
         private void SandboxRespawnReceived(MsgSandboxRespawn message, EntitySessionEventArgs args)
         {
