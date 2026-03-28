@@ -404,11 +404,6 @@ public static float FractionToMaxPressure(GasMixture mix1, GasMixture mix2, floa
         /// <returns>The difference in moles required to reach the target pressure.</returns>
         /// <remarks>Note that this method doesn't take into account the heat capacity of the
         /// transferred volume causing a pressure rise in the target <see cref="GasMixture"/>.</remarks>
-        [PublicAPI]
-        public static float MolesToMaxPressure(GasMixture mix1, GasMixture mix2, float targetPressure)
-        {
-            if (mix1.TotalMoles <= 0f || mix1.Temperature <= 0f || targetPressure <= mix2.Pressure)
-                return 0f;
 
             /*
              Calculate the moles required to reach the target pressure.
