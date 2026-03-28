@@ -31,6 +31,58 @@ namespace Content.Server.Atmos.EntitySystems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override float GetHeatCapacityCalculation(float[] moles, bool space)
         {
+
+/// <summary>
+/// Returns the heat capacity of a gas mixture in J/K.
+/// </summary>
+public float GetHeatCapacity(GasMixture mixture, bool applyScaling = false)
+{
+    // applyScaling больше не используется в расчёте — оставлен для совместимости сигнатур
+    return GetHeatCapacityCalculation(mixture.Moles, mixture.Immutable);
+}
+
+/// <summary>
+/// Returns the internal (thermal) energy of a gas mixture in Joules.
+/// </summary>
+public float GetThermalEnergy(GasMixture mixture)
+{
+    return mixture.Temperature * GetHeatCapacity(mixture);
+}
+
+/// <summary>
+/// Returns the thermal energy given a pre-computed heat capacity.
+/// </summary>
+public float GetThermalEnergy(GasMixture mixture, float cachedHeatCapacity)
+{
+    return mixture.Temperature * cachedHeatCapacity;
+}
+
+/// <summary>
+/// Merges a gas mixture into a receiver, conserving energy.
+/// </summary>
+public void Merge(GasMixture receiver, GasMixture giver)
+{
+    if (receiver.Immutable)
+        return;
+
+    if (MathF.Abs(receiver.Temperature - giver.Temperature) > Atmospherics.MinimumTemperatureDeltaToConsider
+        && giver.TotalMoles > 0f)
+    {
+        var combinedHeatCapacity = GetHeatCapacity(receiver) + GetHeatCapacity(giver);
+        if (combinedHeatCapacity > Atmospherics.MinimumHeatCapacity)
+            receiver.Temperature = (GetThermalEnergy(receiver) + GetThermalEnergy(giver)) / combinedHeatCapacity;
+    }
+
+    NumericsHelpers.Add(receiver.Moles, giver.Moles);
+}
+
+/// <summary>
+/// Returns true if the mixture contains both fuel and oxidizer (can sustain ignition).
+/// </summary>
+public bool IsMixtureIgnitable(GasMixture mixture)
+{
+    return IsMixtureFuel(mixture) && IsMixtureOxidizer(mixture);
+}
             // Little hack to make space gas mixtures have heat capacity, therefore allowing them to cool down rooms.
             if (space && MathHelper.CloseTo(NumericsHelpers.HorizontalAdd(moles), 0f))
             {
@@ -318,14 +370,26 @@ namespace Content.Server.Atmos.EntitySystems
         /// to the target. This may return negative if you have your mixtures swapped.</returns>
         /// <remarks>Note that this method doesn't take into account the heat capacity of the
         /// transferred volume causing a pressure rise in the target <see cref="GasMixture"/>.</remarks>
-        [PublicAPI]
-        public static float FractionToMaxPressure(GasMixture mix1, GasMixture mix2, float targetPressure)
-        {
-            if (mix1.TotalMoles <= 0f || mix1.Temperature <= 0f || targetPressure <= mix2.Pressure)
-                return 0f;
-            var molesToTransfer = MolesToMaxPressure(mix1, mix2, targetPressure);
-            return molesToTransfer / mix1.TotalMoles;
-        }
+
+[PublicAPI]
+public static float MolesToMaxPressure(GasMixture mix1, GasMixture mix2, float targetPressure)
+{
+    if (mix1.TotalMoles <= 0f || mix1.Temperature <= 0f || targetPressure <= mix2.Pressure)
+        return 0f;
+
+    var result = (targetPressure - mix2.Pressure) * mix2.Volume / (mix1.Temperature * Atmospherics.R);
+    return float.IsFinite(result) ? MathF.Max(0f, result) : 0f;
+}
+
+[PublicAPI]
+public static float FractionToMaxPressure(GasMixture mix1, GasMixture mix2, float targetPressure)
+{
+    if (mix1.TotalMoles <= 0f || mix1.Temperature <= 0f || targetPressure <= mix2.Pressure)
+        return 0f;
+
+    var fraction = MolesToMaxPressure(mix1, mix2, targetPressure) / mix1.TotalMoles;
+    return float.IsFinite(fraction) ? MathF.Max(0f, fraction) : 0f;
+}
 
         /// <summary>
         /// Determines the number of moles to be removed and transferred from a source
