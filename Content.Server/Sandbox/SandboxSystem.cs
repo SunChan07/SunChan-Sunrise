@@ -102,15 +102,17 @@ SubscribeNetworkEvent<MsgSandboxThermalVision>(SandboxThermalVisionHandler);
 
         private void SandboxThermalVisionHandler(MsgSandboxThermalVision msg, EntitySessionEventArgs args)
 {
-        if (SandboxAllowed)
-            return;
+    if (!IsSandboxEnabled)
+        return;
 
-        var player = args.SenderSession.AttachedEntity;
-        if (player is null)
-            return;
+    var player = args.SenderSession.AttachedEntity;
+    if (player is null)
+        return;
 
-        if (HasComp<ThermalVisionComponent>(player.Value))      RemComp<ThermalVisionComponent>(player.Value);
-        else EnsureComp<ThermalVisionComponent>(player.Value);
+    if (HasComp<ThermalVisionComponent>(player.Value))
+        RemComp<ThermalVisionComponent>(player.Value);
+    else
+        EnsureComp<ThermalVisionComponent>(player.Value);
 }            
 
         private void SandboxRespawnReceived(MsgSandboxRespawn message, EntitySessionEventArgs args)
