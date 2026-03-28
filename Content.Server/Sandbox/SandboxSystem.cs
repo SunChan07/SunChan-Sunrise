@@ -15,6 +15,7 @@ using Robust.Server.Player;
 using Robust.Shared.Enums;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
+using Content.Shared._Sunrise.ThermalVision;
 
 namespace Content.Server.Sandbox
 {
@@ -51,7 +52,8 @@ namespace Content.Server.Sandbox
             SubscribeNetworkEvent<MsgSandboxGiveAghost>(SandboxGiveAghostReceived);
             SubscribeNetworkEvent<MsgSandboxSuicide>(SandboxSuicideReceived);
 
-            SubscribeLocalEvent<GameRunLevelChangedEvent>(GameTickerOnOnRunLevelChanged);
+SubscribeNetworkEvent<MsgSandboxThermalVision>(SandboxThermalVisionHandler);
+      SubscribeLocalEvent<GameRunLevelChangedEvent>(GameTickerOnOnRunLevelChanged);
 
             _playerManager.PlayerStatusChanged += OnPlayerStatusChanged;
 
@@ -97,6 +99,19 @@ namespace Content.Server.Sandbox
 
             RaiseNetworkEvent(new MsgSandboxStatus { SandboxAllowed = IsSandboxEnabled }, e.Session.Channel);
         }
+
+        private void SandboxThermalVisionHandler(MsgSandboxThermalVision msg, EntitySessionEventArgs args)
+{
+        if (SandboxAllowed)
+            return;
+
+        var player = args.SenderSession.AttachedEntity;
+        if (player is null)
+            return;
+
+        if (HasComp<ThermalVisionComponent>(player.Value))      RemComp<ThermalVisionComponent>(player.Value);
+        else EnsureComp<ThermalVisionComponent>(player.Value);
+}            
 
         private void SandboxRespawnReceived(MsgSandboxRespawn message, EntitySessionEventArgs args)
         {
