@@ -25,7 +25,7 @@ public sealed partial class SandboxSystem : SharedSandboxSystem
     public override void Initialize()
     {
         base.Initialize();
-        SubscribeNetworkEvent<MsgSandboxThermalVision>(SandboxThermalVisionHandler);
+        SubscribeNetworkEvent(SandboxThermalVisionHandler);
     }
 
 [Dependency] private readonly IPlayerManager _playerManager = default!;
