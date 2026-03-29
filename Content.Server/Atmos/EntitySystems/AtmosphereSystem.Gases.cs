@@ -20,7 +20,7 @@ namespace Content.Server.Atmos.EntitySystems
         /// </summary>
         public IEnumerable<GasReactionPrototype> GasReactions => _gasReactions;
 
-        public override void InitializeGases()
+        protected override void InitializeGases()
         {
             base.InitializeGases();
 

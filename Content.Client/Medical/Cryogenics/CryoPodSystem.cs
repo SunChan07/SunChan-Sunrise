@@ -3,15 +3,6 @@ using Content.Shared.Medical.Cryogenics;
 using Robust.Client.GameObjects;
 
 namespace Content.Client.Medical.Cryogenics;
-{
-    public class CryoPodSystem : SharedCryoPodSystem
-    {
-        protected override void UpdateUi(Entity<CryoPodComponent> cryoPod)
-        {
-            // No-Realisation
-        }
-    }
-}
 
 public sealed class CryoPodSystem : SharedCryoPodSystem
 {
