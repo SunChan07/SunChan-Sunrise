@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+﻿﻿using System.Numerics;
 using Content.Shared.Medical.Cryogenics;
 using Robust.Client.GameObjects;
 
@@ -64,7 +64,10 @@ public sealed class CryoPodSystem : SharedCryoPodSystem
         }
     }
 
-    private void UpdateUi(Entity<CryoPodComponent> cryo)
+    protected override void UpdateUi(Entity<CryoPodComponent> cryoPod)
+    {
+        // Atmos and health scanner aren't predicted currently...
+    }
 }
 
 public enum CryoPodVisualLayers : byte
