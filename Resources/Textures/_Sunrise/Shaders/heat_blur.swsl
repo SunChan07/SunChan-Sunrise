@@ -1,0 +1,27 @@
+uniform sampler2D SCREEN_TEXTURE;
+uniform highp float intensity; // 0.0..1.0
+
+void fragment() {
+    if (intensity <= 0.001) {
+        COLOR = texture(SCREEN_TEXTURE, UV);
+        return;
+    }
+
+    // Scale blur radius: up to 8 pixels at intensity=1.0
+    highp float scale = intensity * 8.0;
+
+    // Gaussian-like 3×3 box blur; weights sum to 1.0
+    highp vec3 col = vec3(0.0);
+    col += texture(SCREEN_TEXTURE, UV).xyz * 0.36;
+    col += texture(SCREEN_TEXTURE, UV + vec2( SCREEN_PIXEL_SIZE.x * scale,  0.0)).xyz * 0.12;
+    col += texture(SCREEN_TEXTURE, UV + vec2(-SCREEN_PIXEL_SIZE.x * scale,  0.0)).xyz * 0.12;
+    col += texture(SCREEN_TEXTURE, UV + vec2( 0.0,  SCREEN_PIXEL_SIZE.y * scale)).xyz * 0.12;
+    col += texture(SCREEN_TEXTURE, UV + vec2( 0.0, -SCREEN_PIXEL_SIZE.y * scale)).xyz * 0.12;
+    col += texture(SCREEN_TEXTURE, UV + vec2( SCREEN_PIXEL_SIZE.x * scale,  SCREEN_PIXEL_SIZE.y * scale)).xyz * 0.04;
+    col += texture(SCREEN_TEXTURE, UV + vec2(-SCREEN_PIXEL_SIZE.x * scale,  SCREEN_PIXEL_SIZE.y * scale)).xyz * 0.04;
+    col += texture(SCREEN_TEXTURE, UV + vec2( SCREEN_PIXEL_SIZE.x * scale, -SCREEN_PIXEL_SIZE.y * scale)).xyz * 0.04;
+    col += texture(SCREEN_TEXTURE, UV + vec2(-SCREEN_PIXEL_SIZE.x * scale, -SCREEN_PIXEL_SIZE.y * scale)).xyz * 0.04;
+
+    highp vec4 origColor = zTexture(UV);
+    COLOR = vec4(col, origColor.a);
+}

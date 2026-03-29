@@ -1,7 +1,4 @@
-﻿using Content.Client.Atmos.Components;
 using Content.Shared.Atmos;
-using Content.Shared.Atmos.Components;
-using Content.Shared.Atmos.EntitySystems;
 using Robust.Client.GameObjects;
 using Robust.Client.Graphics;
 using Robust.Client.ResourceManagement;
