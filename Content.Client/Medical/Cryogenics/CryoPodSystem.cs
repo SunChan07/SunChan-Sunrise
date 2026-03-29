@@ -64,10 +64,7 @@ public sealed class CryoPodSystem : SharedCryoPodSystem
         }
     }
 
-    protected override void UpdateUi(Entity<CryoPodComponent> cryoPod)
-    {
-        // Atmos and health scanner aren't predicted currently...
-    }
+    private void UpdateUi(Entity<CryoPodComponent> cryo)
 }
 
 public enum CryoPodVisualLayers : byte

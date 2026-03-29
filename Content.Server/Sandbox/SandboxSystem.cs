@@ -18,17 +18,17 @@ using Robust.Shared.Prototypes;
 using Content.Shared._Sunrise.ThermalVision;
 using Content.Shared._Sunrise.Sandbox;
 
-namespace Content.Server.Sandbox
+namespace Content.Server.Sandbox;
+
+public sealed partial class SandboxSystem : SharedSandboxSystem
 {
-    public sealed partial class SandboxSystem : SharedSandboxSystem
+    public override void Initialize()
     {
-        public override void Initialize()
-        {
-            base.Initialize();
-            SubscribeNetworkEvent(SandboxThermalVisionHandler);
-        }
-    {
-        [Dependency] private readonly IPlayerManager _playerManager = default!;
+        base.Initialize();
+        SubscribeNetworkEvent<MsgSandboxThermalVision>(SandboxThermalVisionHandler);
+    }
+
+[Dependency] private readonly IPlayerManager _playerManager = default!;
         [Dependency] private readonly IPlacementManager _placementManager = default!;
         [Dependency] private readonly IConGroupController _conGroupController = default!;
         [Dependency] private readonly IServerConsoleHost _host = default!;
@@ -120,9 +120,6 @@ SubscribeNetworkEvent<MsgSandboxThermalVision>(SandboxThermalVisionHandler);
 
         private void SandboxThermalVisionHandler(MsgSandboxThermalVision ev, EntitySessionEventArgs args)
         {
-            if (!IsSandboxEnabled)
-                return;
-
             var player = args.SenderSession.AttachedEntity;
             if (player is null)
                 return;
@@ -132,6 +129,7 @@ SubscribeNetworkEvent<MsgSandboxThermalVision>(SandboxThermalVisionHandler);
             else
                 EnsureComp<ThermalVisionComponent>(player.Value);
         }
+}
 
         /// <summary>
         /// Reconciles ThermalVisionComponent with the sandbox marker.
