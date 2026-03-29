@@ -20,7 +20,13 @@ using Content.Shared._Sunrise.Sandbox;
 
 namespace Content.Server.Sandbox
 {
-    public sealed class SandboxSystem : SharedSandboxSystem
+    public sealed partial class SandboxSystem : SharedSandboxSystem
+    {
+        public override void Initialize()
+        {
+            base.Initialize();
+            SubscribeNetworkEvent(SandboxThermalVisionHandler);
+        }
     {
         [Dependency] private readonly IPlayerManager _playerManager = default!;
         [Dependency] private readonly IPlacementManager _placementManager = default!;
@@ -112,7 +118,7 @@ SubscribeNetworkEvent<MsgSandboxThermalVision>(SandboxThermalVisionHandler);
             RaiseNetworkEvent(new MsgSandboxStatus { SandboxAllowed = IsSandboxEnabled }, e.Session.Channel);
         }
 
-        private void SandboxThermalVisionHandler(MsgSandboxThermalVision msg, EntitySessionEventArgs args)
+        private void SandboxThermalVisionHandler(MsgSandboxThermalVision ev, EntitySessionEventArgs args)
         {
             if (!IsSandboxEnabled)
                 return;
@@ -121,12 +127,10 @@ SubscribeNetworkEvent<MsgSandboxThermalVision>(SandboxThermalVisionHandler);
             if (player is null)
                 return;
 
-            if (HasComp<SandboxThermalVisionMarkerComponent>(player.Value))
-                RemComp<SandboxThermalVisionMarkerComponent>(player.Value);
+            if (HasComp<ThermalVisionComponent>(player.Value))
+                RemCompDeferred<ThermalVisionComponent>(player.Value);
             else
-                EnsureComp<SandboxThermalVisionMarkerComponent>(player.Value);
-
-            SyncThermalVision(player.Value);
+                EnsureComp<ThermalVisionComponent>(player.Value);
         }
 
         /// <summary>
@@ -153,7 +157,7 @@ SubscribeNetworkEvent<MsgSandboxThermalVision>(SandboxThermalVisionHandler);
                 RemComp<SandboxThermalVisionMarkerComponent>(uid);
                 RemCompDeferred<ThermalVisionComponent>(uid);
             }
-        } 
+        }
 
         private void SandboxRespawnReceived(MsgSandboxRespawn message, EntitySessionEventArgs args)
         {
