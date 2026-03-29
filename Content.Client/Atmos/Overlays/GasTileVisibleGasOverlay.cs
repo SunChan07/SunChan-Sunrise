@@ -28,14 +28,14 @@ public sealed class GasTileVisibleGasOverlay : Overlay
     [Dependency] private readonly IMapManager _mapManager = default!;
 
     /// Sunrise edit: gas indices that should never be rendered (transparent gases)
-    private static readonly HashSet<Gas> TransparentGases = new()
+    private static readonly HashSet TransparentGases = new()
     {
         Gas.Oxygen,
         Gas.Nitrogen,
         Gas.CarbonDioxide,
         Gas.NitrousOxide,
         Gas.Hydrogen,
-        Gas.Helium
+        Gas.Helium,
         Gas.Pluoxium
     };
 
