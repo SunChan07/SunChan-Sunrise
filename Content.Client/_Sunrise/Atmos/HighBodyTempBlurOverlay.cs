@@ -55,8 +55,6 @@ public sealed class HighBodyTempBlurOverlay : Overlay
 
         var temp = tempComp.CurrentTemperature;
         var intensity = Math.Clamp((temp - StartK) / (FullK - StartK), 0f, 1f);
-
-        // Вот сюда — применяем HeatBlur шейдер к экранной текстуре:
         _shader.SetParameter("SCREEN_TEXTURE", ScreenTexture);
         _shader.SetParameter("intensity", intensity); // float 0.0..1.0
         args.WorldHandle.UseShader(_shader);
