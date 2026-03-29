@@ -127,6 +127,7 @@
   color: 005959
   reagent: Helium
   pricePerMole: 7
+  isFuel: true
 
 - type: gas
   id: AntiNoblium

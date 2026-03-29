@@ -30,6 +30,9 @@ public sealed class GasTileVisibleGasOverlay : Overlay
         Gas.Nitrogen,
         Gas.CarbonDioxide,
         Gas.NitrousOxide,
+        Gas.Hydrogen,
+        Gas.Helium,
+        Gas.Pluoxium
     };
 
     private readonly bool[] _isTransparent;
