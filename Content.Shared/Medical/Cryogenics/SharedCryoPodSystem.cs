@@ -240,6 +240,12 @@ public abstract partial class SharedCryoPodSystem : EntitySystem
         _appearance.SetData(uid, CryoPodVisuals.IsOn, cryoPodEnabled, appearance);
     }
 
+    // Sunrise edit: Added virtual UpdateUI
+    protected virtual void UpdateUi(Entity<CryoPodComponent> cryoPod)
+    {
+        // Basic Realisation, does nothing
+    }
+
     public bool InsertBody(EntityUid uid, EntityUid target, CryoPodComponent cryoPodComponent)
     {
         if (cryoPodComponent.BodyContainer.ContainedEntity != null)
