@@ -18,223 +18,215 @@ using Robust.Shared.Prototypes;
 using Content.Shared._Sunrise.ThermalVision;
 using Content.Shared._Sunrise.Sandbox;
 
-namespace Content.Server.Sandbox;
-
-public sealed partial class SandboxSystem : SharedSandboxSystem
+namespace Content.Server.Sandbox
 {
-    [Dependency] private readonly IPlayerManager _playerManager = default!;
-    [Dependency] private readonly IPlacementManager _placementManager = default!;
-    [Dependency] private readonly IConGroupController _conGroupController = default!;
-    [Dependency] private readonly IServerConsoleHost _host = default!;
-    [Dependency] private readonly SharedAccessSystem _access = default!;
-    [Dependency] private readonly InventorySystem _inventory = default!;
-    [Dependency] private readonly ItemSlotsSystem _slots = default!;
-    [Dependency] private readonly GameTicker _ticker = default!;
-    [Dependency] private readonly SharedHandsSystem _handsSystem = default!;
-
-    private bool _isSandboxEnabled;
-
-    [ViewVariables(VVAccess.ReadWrite)]
-    public bool IsSandboxEnabled
+    public sealed partial class SandboxSystem : SharedSandboxSystem
     {
-        get => _isSandboxEnabled;
-        set
+        [Dependency] private readonly IPlayerManager _playerManager = default!;
+        [Dependency] private readonly IPlacementManager _placementManager = default!;
+        [Dependency] private readonly IConGroupController _conGroupController = default!;
+        [Dependency] private readonly IServerConsoleHost _host = default!;
+        [Dependency] private readonly SharedAccessSystem _access = default!;
+        [Dependency] private readonly InventorySystem _inventory = default!;
+        [Dependency] private readonly ItemSlotsSystem _slots = default!;
+        [Dependency] private readonly GameTicker _ticker = default!;
+        [Dependency] private readonly SharedHandsSystem _handsSystem = default!;
+
+        private bool _isSandboxEnabled;
+
+        [ViewVariables(VVAccess.ReadWrite)]
+        public bool IsSandboxEnabled
         {
-            _isSandboxEnabled = value;
-            if (!value)
-                ClearAllSandboxThermalVision();
-            UpdateSandboxStatusForAll();
-        }
-    }
-
-    public override void Initialize()
-    {
-        base.Initialize();
-
-        SubscribeNetworkEvent<MsgSandboxRespawn>(SandboxRespawnReceived);
-        SubscribeNetworkEvent<MsgSandboxGiveAccess>(SandboxGiveAccessReceived);
-        SubscribeNetworkEvent<MsgSandboxGiveAghost>(SandboxGiveAghostReceived);
-        SubscribeNetworkEvent<MsgSandboxSuicide>(SandboxSuicideReceived);
-        SubscribeNetworkEvent<MsgSandboxThermalVision>(SandboxThermalVisionHandler);
-        SubscribeLocalEvent<GameRunLevelChangedEvent>(GameTickerOnOnRunLevelChanged);
-
-        _playerManager.PlayerStatusChanged += OnPlayerStatusChanged;
-
-        _placementManager.AllowPlacementFunc = placement =>
-        {
-            if (IsSandboxEnabled)
+            get => _isSandboxEnabled;
+            set
             {
-                return true;
+                _isSandboxEnabled = value;
+                if (!value)
+                    ClearAllSandboxThermalVision();
+                UpdateSandboxStatusForAll();
             }
-
-            var channel = placement.MsgChannel;
-            var player = _playerManager.GetSessionByChannel(channel);
-
-            if (_conGroupController.CanAdminPlace(player))
-            {
-                return true;
-            }
-
-            return false;
-        };
-    }
-
-    public override void Shutdown()
-    {
-        base.Shutdown();
-        _placementManager.AllowPlacementFunc = null;
-        _playerManager.PlayerStatusChanged -= OnPlayerStatusChanged;
-    }
-
-    private void GameTickerOnOnRunLevelChanged(GameRunLevelChangedEvent obj)
-    {
-        // Automatically clear sandbox state when round resets.
-        if (obj.New == GameRunLevel.PreRoundLobby)
-        {
-            IsSandboxEnabled = false;
-        }
-    }
-
-    private void OnPlayerStatusChanged(object? sender, SessionStatusEventArgs e)
-    {
-        if (e.NewStatus != SessionStatus.Connected || e.OldStatus != SessionStatus.Connecting)
-            return;
-
-        RaiseNetworkEvent(new MsgSandboxStatus { SandboxAllowed = IsSandboxEnabled }, e.Session.Channel);
-    }
-
-    private void SandboxThermalVisionHandler(MsgSandboxThermalVision ev, EntitySessionEventArgs args)
-    {
-        var player = args.SenderSession.AttachedEntity;
-        if (player is null)
-            return;
-
-        if (HasComp<ThermalVisionComponent>(player.Value))
-            RemCompDeferred<ThermalVisionComponent>(player.Value);
-        else
-            EnsureComp<ThermalVisionComponent>(player.Value);
-    }
-
-    /// <summary>
-    /// Reconciles ThermalVisionComponent with the sandbox marker.
-    /// Adds ThermalVisionComponent when the marker is present; removes it when absent.
-    /// </summary>
-    private void SyncThermalVision(EntityUid player)
-    {
-        if (HasComp<SandboxThermalVisionMarkerComponent>(player))
-            EnsureComp<ThermalVisionComponent>(player);
-        else
-            RemCompDeferred<ThermalVisionComponent>(player);
-    }
-
-    /// <summary>
-    /// Removes sandbox thermal vision markers and ThermalVisionComponent
-    /// from all players — called when sandbox is disabled or the round resets.
-    /// </summary>
-    private void ClearAllSandboxThermalVision()
-    {
-        var query = EntityQueryEnumerator<SandboxThermalVisionMarkerComponent>();
-        while (query.MoveNext(out var uid, out _))
-        {
-            RemComp<SandboxThermalVisionMarkerComponent>(uid);
-            RemCompDeferred<ThermalVisionComponent>(uid);
-        }
-    }
-
-    private void SandboxRespawnReceived(MsgSandboxRespawn message, EntitySessionEventArgs args)
-    {
-        if (!IsSandboxEnabled)
-            return;
-
-        var player = _playerManager.GetSessionByChannel(args.SenderSession.Channel);
-        if (player.AttachedEntity == null) return;
-
-        _ticker.Respawn(player);
-    }
-
-    private void SandboxGiveAccessReceived(MsgSandboxGiveAccess message, EntitySessionEventArgs args)
-    {
-        if (!IsSandboxEnabled)
-            return;
-
-        var player = _playerManager.GetSessionByChannel(args.SenderSession.Channel);
-        if (player.AttachedEntity is not { } attached)
-        {
-            return;
         }
 
-        var allAccess = PrototypeManager
-            .EnumeratePrototypes<AccessLevelPrototype>()
-            .Select(p => new ProtoId<AccessLevelPrototype>(p.ID)).ToList();
-
-        if (_inventory.TryGetSlotEntity(attached, "id", out var slotEntity))
+        public override void Initialize()
         {
-            if (HasComp<AccessComponent>(slotEntity))
+            base.Initialize();
+
+            SubscribeNetworkEvent<MsgSandboxRespawn>(SandboxRespawnReceived);
+            SubscribeNetworkEvent<MsgSandboxGiveAccess>(SandboxGiveAccessReceived);
+            SubscribeNetworkEvent<MsgSandboxGiveAghost>(SandboxGiveAghostReceived);
+            SubscribeNetworkEvent<MsgSandboxSuicide>(SandboxSuicideReceived);
+            SubscribeNetworkEvent<MsgSandboxThermalVision>(SandboxThermalVisionHandler);
+            SubscribeLocalEvent<GameRunLevelChangedEvent>(GameTickerOnOnRunLevelChanged);
+
+            _playerManager.PlayerStatusChanged += OnPlayerStatusChanged;
+
+            _placementManager.AllowPlacementFunc = placement =>
             {
-                UpgradeId(slotEntity.Value);
-            }
-            else if (TryComp<PdaComponent>(slotEntity, out var pda))
-            {
-                if (pda.ContainedId is null)
+                if (IsSandboxEnabled)
                 {
-                    var newID = CreateFreshId();
-                    if (TryComp<ItemSlotsComponent>(slotEntity, out var itemSlots))
+                    return true;
+                }
+
+                var channel = placement.MsgChannel;
+                var player = _playerManager.GetSessionByChannel(channel);
+
+                if (_conGroupController.CanAdminPlace(player))
+                {
+                    return true;
+                }
+
+                return false;
+            };
+        }
+
+        public override void Shutdown()
+        {
+            base.Shutdown();
+            _placementManager.AllowPlacementFunc = null;
+            _playerManager.PlayerStatusChanged -= OnPlayerStatusChanged;
+        }
+
+        private void GameTickerOnOnRunLevelChanged(GameRunLevelChangedEvent obj)
+        {
+            if (obj.New == GameRunLevel.PreRoundLobby)
+            {
+                IsSandboxEnabled = false;
+            }
+        }
+
+        private void OnPlayerStatusChanged(object? sender, SessionStatusEventArgs e)
+        {
+            if (e.NewStatus != SessionStatus.Connected || e.OldStatus != SessionStatus.Connecting)
+                return;
+
+            RaiseNetworkEvent(new MsgSandboxStatus { SandboxAllowed = IsSandboxEnabled }, e.Session.Channel);
+        }
+
+        private void SandboxThermalVisionHandler(MsgSandboxThermalVision ev, EntitySessionEventArgs args)
+        {
+            var player = args.SenderSession.AttachedEntity;
+            if (player is null)
+                return;
+
+            if (HasComp<ThermalVisionComponent>(player.Value))
+                RemCompDeferred<ThermalVisionComponent>(player.Value);
+            else
+                EnsureComp<ThermalVisionComponent>(player.Value);
+        }
+
+        private void SyncThermalVision(EntityUid player)
+        {
+            if (HasComp<SandboxThermalVisionMarkerComponent>(player))
+                EnsureComp<ThermalVisionComponent>(player);
+            else
+                RemCompDeferred<ThermalVisionComponent>(player);
+        }
+
+        private void ClearAllSandboxThermalVision()
+        {
+            var query = EntityQueryEnumerator<SandboxThermalVisionMarkerComponent>();
+            while (query.MoveNext(out var uid, out _))
+            {
+                RemComp<SandboxThermalVisionMarkerComponent>(uid);
+                RemCompDeferred<ThermalVisionComponent>(uid);
+            }
+        }
+
+        private void SandboxRespawnReceived(MsgSandboxRespawn message, EntitySessionEventArgs args)
+        {
+            if (!IsSandboxEnabled)
+                return;
+
+            var player = _playerManager.GetSessionByChannel(args.SenderSession.Channel);
+            if (player.AttachedEntity == null) return;
+
+            _ticker.Respawn(player);
+        }
+
+        private void SandboxGiveAccessReceived(MsgSandboxGiveAccess message, EntitySessionEventArgs args)
+        {
+            if (!IsSandboxEnabled)
+                return;
+
+            var player = _playerManager.GetSessionByChannel(args.SenderSession.Channel);
+            if (player.AttachedEntity is not { } attached)
+            {
+                return;
+            }
+
+            var allAccess = PrototypeManager
+                .EnumeratePrototypes<AccessLevelPrototype>()
+                .Select(p => new ProtoId<AccessLevelPrototype>(p.ID)).ToList();
+
+            if (_inventory.TryGetSlotEntity(attached, "id", out var slotEntity))
+            {
+                if (HasComp<AccessComponent>(slotEntity))
+                {
+                    UpgradeId(slotEntity.Value);
+                }
+                else if (TryComp<PdaComponent>(slotEntity, out var pda))
+                {
+                    if (pda.ContainedId is null)
                     {
-                        _slots.TryInsert(slotEntity.Value, pda.IdSlot, newID, null);
+                        var newID = CreateFreshId();
+                        if (TryComp<ItemSlotsComponent>(slotEntity, out var itemSlots))
+                        {
+                            _slots.TryInsert(slotEntity.Value, pda.IdSlot, newID, null);
+                        }
+                    }
+                    else
+                    {
+                        UpgradeId(pda.ContainedId!.Value);
                     }
                 }
-                else
+            }
+            else if (TryComp<HandsComponent>(attached, out var hands))
+            {
+                var card = CreateFreshId();
+                if (!_inventory.TryEquip(attached, card, "id", true, true))
                 {
-                    UpgradeId(pda.ContainedId!.Value);
+                    _handsSystem.PickupOrDrop(attached, card, handsComp: hands);
                 }
             }
-        }
-        else if (TryComp<HandsComponent>(attached, out var hands))
-        {
-            var card = CreateFreshId();
-            if (!_inventory.TryEquip(attached, card, "id", true, true))
+
+            void UpgradeId(EntityUid id)
             {
-                _handsSystem.PickupOrDrop(attached, card, handsComp: hands);
+                _access.TrySetTags(id, allAccess);
+            }
+
+            EntityUid CreateFreshId()
+            {
+                var card = Spawn("CaptainIDCard", Transform(attached).Coordinates);
+                UpgradeId(card);
+                if (TryComp<IdCardComponent>(card, out var idComp))
+                {
+                    idComp.FullName = MetaData(attached).EntityName;
+                }
+                return card;
             }
         }
 
-        void UpgradeId(EntityUid id)
+        private void SandboxGiveAghostReceived(MsgSandboxGiveAghost message, EntitySessionEventArgs args)
         {
-            _access.TrySetTags(id, allAccess);
+            if (!IsSandboxEnabled)
+                return;
+
+            var player = _playerManager.GetSessionByChannel(args.SenderSession.Channel);
+            _host.ExecuteCommand(player, _conGroupController.CanCommand(player, "aghost") ? "aghost" : "ghost");
         }
 
-        EntityUid CreateFreshId()
+        private void SandboxSuicideReceived(MsgSandboxSuicide message, EntitySessionEventArgs args)
         {
-            var card = Spawn("CaptainIDCard", Transform(attached).Coordinates);
-            UpgradeId(card);
-            if (TryComp<IdCardComponent>(card, out var idComp))
-            {
-                idComp.FullName = MetaData(attached).EntityName;
-            }
-            return card;
+            if (!IsSandboxEnabled)
+                return;
+
+            var player = _playerManager.GetSessionByChannel(args.SenderSession.Channel);
+            _host.ExecuteCommand(player, "suicide");
         }
-    }
 
-    private void SandboxGiveAghostReceived(MsgSandboxGiveAghost message, EntitySessionEventArgs args)
-    {
-        if (!IsSandboxEnabled)
-            return;
-
-        var player = _playerManager.GetSessionByChannel(args.SenderSession.Channel);
-        _host.ExecuteCommand(player, _conGroupController.CanCommand(player, "aghost") ? "aghost" : "ghost");
-    }
-
-    private void SandboxSuicideReceived(MsgSandboxSuicide message, EntitySessionEventArgs args)
-    {
-        if (!IsSandboxEnabled)
-            return;
-
-        var player = _playerManager.GetSessionByChannel(args.SenderSession.Channel);
-        _host.ExecuteCommand(player, "suicide");
-    }
-
-    private void UpdateSandboxStatusForAll()
-    {
-        RaiseNetworkEvent(new MsgSandboxStatus { SandboxAllowed = IsSandboxEnabled });
+        private void UpdateSandboxStatusForAll()
+        {
+            RaiseNetworkEvent(new MsgSandboxStatus { SandboxAllowed = IsSandboxEnabled });
+        }
     }
 }
