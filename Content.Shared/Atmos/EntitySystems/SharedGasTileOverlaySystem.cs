@@ -30,7 +30,7 @@ namespace Content.Shared.Atmos.EntitySystems
             for (var i = 0; i < Atmospherics.TotalNumberOfGases; i++)
             {
                 var gasPrototype = _atmosphere.GetGas(i);
-                if (!string.IsNullOrEmpty(gasPrototype.GasOverlayTexture) || !string.IsNullOrEmpty(gasPrototype.GasOverlaySprite) && !string.IsNullOrEmpty(gasPrototype.GasOverlayState))
+                if (gasPrototype.GasOverlaySprite != null)
                     visibleGases.Add(i);
             }
 
