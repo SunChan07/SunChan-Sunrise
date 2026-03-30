@@ -10,6 +10,9 @@ namespace Content.Server.Medical.Components;
 [Access(typeof(HealthAnalyzerSystem), typeof(CryoPodSystem))]
 public sealed partial class HealthAnalyzerComponent : AbstractAnalyzerComponent
 {
+     [DataField]
+     public bool IsAnalyzerActive;
+
     [DataField(customTypeSerializer: typeof(TimeOffsetSerializer))]
     [AutoPausedField]
     public override TimeSpan NextUpdate { get; set; } = TimeSpan.Zero;

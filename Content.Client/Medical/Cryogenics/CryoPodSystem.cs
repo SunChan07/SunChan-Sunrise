@@ -7,6 +7,7 @@ namespace Content.Client.Medical.Cryogenics;
 public sealed class CryoPodSystem : SharedCryoPodSystem
 {
     [Dependency] private readonly SpriteSystem _sprite = default!;
+    [Dependency] private readonly AppearanceSystem _appearance = default!;
 
     public override void Initialize()
     {
@@ -45,8 +46,8 @@ public sealed class CryoPodSystem : SharedCryoPodSystem
             return;
         }
 
-        if (!Appearance.TryGetData<bool>(uid, CryoPodVisuals.ContainsEntity, out var isOpen, args.Component)
-            || !Appearance.TryGetData<bool>(uid, CryoPodVisuals.IsOn, out var isOn, args.Component))
+        if (!_appearance.TryGetData<bool>(uid, CryoPodVisuals.ContainsEntity, out var isOpen, args.Component)
+            || !_appearance.TryGetData<bool>(uid, CryoPodVisuals.IsOn, out var isOn, args.Component)) // Sunrise edit
         {
             return;
         }

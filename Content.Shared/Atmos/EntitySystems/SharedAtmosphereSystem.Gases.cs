@@ -38,4 +38,34 @@ public abstract partial class SharedAtmosphereSystem
 
     public virtual ReactionResult React(GasMixture mixture, IGasMixtureHolder? holder)
         => ReactionResult.NoReaction;
+
+    /// Sunrise start
+    // ---- Test-visible aliases / shared heat-capacity API ---- //
+
+    /// <summary>
+    ///     Public read accessor for the SIMD-padded per-gas specific heats array.
+    /// </summary>
+    public float[] GasMolarHeatCapacities => GasSpecificHeats;
+
+    /// <summary>
+    ///     Speedup scale for heat-capacity calculations, populated from
+    ///     <c>CCVars.AtmosHeatScale</c> in server/client CVars files.
+    /// </summary>
+    public float HeatScale { get; protected set; } = 1f;
+
+    /// <summary>
+    ///     Returns the heat capacity of a gas mixture.
+    /// </summary>
+    /// <param name="mixture">The gas mixture to evaluate.</param>
+    /// <param name="applyScaling">
+    ///     <c>false</c> (default) — returns the raw unscaled value.<br/>
+    ///     <c>true</c> — divides by <see cref="HeatScale"/>
+    ///     (the atmospheric simulation speedup factor).
+    /// </param>
+    public float GetHeatCapacity(GasMixture mixture, bool applyScaling = false)
+    {
+        var raw = GetHeatCapacityCalculation(mixture.Moles, mixture.Immutable);
+        return applyScaling ? raw / HeatScale : raw;
+    }
+    /// Sunrise end
 }

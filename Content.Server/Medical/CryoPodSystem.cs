@@ -7,15 +7,29 @@ using Content.Server.NodeContainer.NodeGroups;
 using Content.Server.NodeContainer.Nodes;
 using Content.Shared.Atmos;
 using Content.Shared.Medical.Cryogenics;
+using Content.Shared.Chemistry.Reagent;
+using Content.Shared.FixedPoint;
+using Robust.Shared.Timing;
+using Robust.Shared.Utility;
+using Content.Shared.Containers.ItemSlots;
+using Content.Shared.Chemistry.EntitySystems;
+using Content.Shared.Damage;
+using Content.Shared.Damage.Components;
+using System.Linq;
+
 namespace Content.Server.Medical;
 
 public sealed partial class CryoPodSystem : SharedCryoPodSystem
 {
     [Dependency] private readonly AtmosphereSystem _atmosphereSystem = default!;
+    [Dependency] private readonly IGameTiming _cryoTiming = default!;
+    [Dependency] private readonly SharedUserInterfaceSystem _cryoUi = default!;
     [Dependency] private readonly GasCanisterSystem _gasCanisterSystem = default!;
     [Dependency] private readonly GasAnalyzerSystem _gasAnalyzerSystem = default!;
     [Dependency] private readonly HealthAnalyzerSystem _healthAnalyzerSystem = default!;
     [Dependency] private readonly NodeContainerSystem _nodeContainer = default!;
+    [Dependency] private readonly ItemSlotsSystem _itemSlots = default!;
+    [Dependency] private readonly SharedSolutionContainerSystem _solutionContainer = default!;
 
 
     public override void Initialize()
@@ -34,7 +48,7 @@ public sealed partial class CryoPodSystem : SharedCryoPodSystem
 
         while (query.MoveNext(out var uid, out _, out var cryoPod))
         {
-            if (Timing.CurTime < cryoPod.NextUiUpdateTime)
+            if (_cryoTiming.CurTime < cryoPod.NextUiUpdateTime)
                 continue;
 
             cryoPod.NextUiUpdateTime += cryoPod.UiUpdateInterval;
@@ -45,7 +59,7 @@ public sealed partial class CryoPodSystem : SharedCryoPodSystem
 
     protected override void UpdateUi(Entity<CryoPodComponent> entity)
     {
-        if (!UI.IsUiOpen(entity.Owner, CryoPodUiKey.Key)
+        if (!_cryoUi.IsUiOpen(entity.Owner, CryoPodUiKey.Key)
             || !TryComp(entity, out CryoPodAirComponent? air))
             return;
 
@@ -56,10 +70,15 @@ public sealed partial class CryoPodSystem : SharedCryoPodSystem
         var health = _healthAnalyzerSystem.GetHealthAnalyzerUiState(patient);
         health.ScanMode = true;
 
-        UI.ServerSendUiMessage(
+        // Sunrise edit
+        var hasDamage = patient.HasValue
+                        && TryComp<DamageableComponent>(patient.Value, out var damageable)
+                        && damageable.TotalDamage > FixedPoint2.Zero;
+
+        _cryoUi.ServerSendUiMessage(
             entity.Owner,
             CryoPodUiKey.Key,
-            new CryoPodUserMessage(gasMix, health, beakerCapacity, beaker, injecting)
+            new CryoPodUserMessage(gasMix, health, beakerCapacity, beaker, injecting, hasDamage: hasDamage)
         );
     }
 
@@ -96,4 +115,29 @@ public sealed partial class CryoPodSystem : SharedCryoPodSystem
             args.GasMixtures.Add((entity.Comp.PortName, portAirLocal));
         }
     }
+    // Sunrise edit start
+    private (FixedPoint2? capacity, List<ReagentQuantity>? reagents) GetBeakerInfo(Entity<CryoPodComponent> entity)
+    {
+        var beakerUid = _itemSlots.GetItemOrNull(entity.Owner, entity.Comp.SolutionContainerName);
+        if (beakerUid == null)
+            return (null, null);
+
+        if (!_solutionContainer.TryGetFitsInDispenser(beakerUid.Value, out _, out var solution))
+            return (null, null);
+
+        return (solution.MaxVolume, solution.Contents.ToList());
+    }
+
+    private List<ReagentQuantity>? GetInjectingReagents(Entity<CryoPodComponent> entity)
+    {
+        if (!_solutionContainer.TryGetSolution(
+                entity.Owner,
+                CryoPodComponent.InjectionBufferSolutionName,
+                out _,
+                out var buffer))
+            return new List<ReagentQuantity>();
+
+        return buffer.Contents.ToList();
+    }
+// Sunrise edit end
 }

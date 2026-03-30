@@ -25,7 +25,6 @@ namespace Content.Server.Atmos.EntitySystems
         public float AtmosMaxProcessTime { get; private set; }
         public float AtmosTickRate { get; private set; }
         public float Speedup { get; private set; }
-        public float HeatScale { get; private set; }
         public bool DeltaPressureDamage { get; private set; }
         public int DeltaPressureParallelProcessPerIteration { get; private set; }
         public int DeltaPressureParallelBatchSize { get; private set; }

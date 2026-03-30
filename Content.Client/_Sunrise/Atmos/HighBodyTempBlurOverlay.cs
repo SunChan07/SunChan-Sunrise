@@ -1,4 +1,5 @@
 using Content.Shared.Temperature;
+using Content.Shared.Temperature.Components;
 using JetBrains.Annotations;
 using Robust.Client.Graphics;
 using Robust.Client.Player;

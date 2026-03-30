@@ -38,7 +38,7 @@ namespace Content.Server.Atmos.EntitySystems
             }
 
             Span<float> tmp = stackalloc float[moles.Length];
-            NNumericsHelpers.Multiply(moles, GasSpecificHeats, tmp);
+            NumericsHelpers.Multiply(moles, GasSpecificHeats, tmp);
             // Adjust heat capacity by speedup, because this is primarily what
             // determines how quickly gases heat up/cool.
             return MathF.Max(NumericsHelpers.HorizontalAdd(tmp), Atmospherics.MinimumHeatCapacity);
@@ -524,6 +524,35 @@ namespace Content.Server.Atmos.EntitySystems
             NumericsHelpers.Add(mixture.Moles, molsToAdd);
             NumericsHelpers.Max(mixture.Moles, 0f);
         }
+
+        // ---- Sunrise shim API ---- //
+
+        public float GetThermalEnergy(GasMixture mixture)
+            => mixture.Temperature * GetHeatCapacity(mixture);
+
+        public float GetThermalEnergy(GasMixture mixture, float cachedHeatCapacity)
+            => mixture.Temperature * cachedHeatCapacity;
+
+        public void Merge(GasMixture receiver, GasMixture giver)
+        {
+            if (receiver.Immutable)
+                return;
+
+            if (MathF.Abs(receiver.Temperature - giver.Temperature) > Atmospherics.MinimumTemperatureDeltaToConsider)
+            {
+                var rHC = GetHeatCapacity(receiver);
+                var gHC = GetHeatCapacity(giver);
+                var combined = rHC + gHC;
+                if (combined > Atmospherics.MinimumHeatCapacity)
+                    receiver.Temperature = (GetThermalEnergy(receiver, rHC) + GetThermalEnergy(giver, gHC)) / combined;
+            }
+            NumericsHelpers.Add(receiver.Moles, giver.Moles);
+        }
+
+        public bool IsMixtureIgnitable(GasMixture mixture)
+            => IsMixtureFuel(mixture) && IsMixtureOxidizer(mixture);
+
+// ---- End Sunrise shim API ---- //
 
         public enum GasCompareResult
         {
