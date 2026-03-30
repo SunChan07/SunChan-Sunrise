@@ -14,6 +14,8 @@ using Robust.Shared.Utility;
 using Content.Shared.Containers.ItemSlots;
 using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Damage;
+using Content.Shared.Damage.Components;
+using System.Linq;
 
 namespace Content.Server.Medical;
 
