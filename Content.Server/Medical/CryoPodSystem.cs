@@ -11,6 +11,8 @@ using Content.Shared.Chemistry.Reagent;
 using Content.Shared.FixedPoint;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
+using Content.Server.Item;
+using Content.Shared.Chemistry.EntitySystems;
 
 namespace Content.Server.Medical;
 
@@ -23,6 +25,8 @@ public sealed partial class CryoPodSystem : SharedCryoPodSystem
     [Dependency] private readonly GasAnalyzerSystem _gasAnalyzerSystem = default!;
     [Dependency] private readonly HealthAnalyzerSystem _healthAnalyzerSystem = default!;
     [Dependency] private readonly NodeContainerSystem _nodeContainer = default!;
+    [Dependency] private readonly ItemSlotsSystem _itemSlots = default!;
+    [Dependency] private readonly SharedSolutionContainerSystem _solutionContainer = default!;
 
 
     public override void Initialize()
@@ -106,15 +110,26 @@ public sealed partial class CryoPodSystem : SharedCryoPodSystem
     // Sunrise edit start
     private (FixedPoint2? capacity, List<ReagentQuantity>? reagents) GetBeakerInfo(Entity<CryoPodComponent> entity)
     {
-        // TODO: implement chemical beaker support
-        return (null, null);
+        var beakerUid = _itemSlots.GetItemOrNull(entity.Owner, entity.Comp.SolutionContainerName);
+        if (beakerUid == null)
+            return (null, null);
+
+        if (!_solutionContainer.TryGetFitsInDispenser(beakerUid.Value, out _, out var solution))
+            return (null, null);
+
+        return (solution.MaxVolume, solution.Contents.ToList());
     }
 
     private List<ReagentQuantity>? GetInjectingReagents(Entity<CryoPodComponent> entity)
     {
-        // TODO: implement injecting reagent list
-        return null;
+        if (!_solutionContainer.TryGetSolution(
+                entity.Owner,
+                CryoPodComponent.InjectionBufferSolutionName,
+                out _,
+                out var buffer))
+            return new List<ReagentQuantity>();
 
+        return buffer.Contents.ToList();
     }
-    //Sunrise edit end
+// Sunrise edit end
 }

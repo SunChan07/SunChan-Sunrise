@@ -10,7 +10,6 @@ namespace Content.Server.Medical.Components;
 [Access(typeof(HealthAnalyzerSystem), typeof(CryoPodSystem))]
 public sealed partial class HealthAnalyzerComponent : AbstractAnalyzerComponent
 {
-     /// Sunrise edit
      [DataField]
      public bool IsAnalyzerActive;
 
