@@ -12,6 +12,8 @@ namespace Content.Server.Medical;
 public sealed partial class CryoPodSystem : SharedCryoPodSystem
 {
     [Dependency] private readonly AtmosphereSystem _atmosphereSystem = default!;
+    [Dependency] private readonly IGameTiming _cryoTiming = default!;
+    [Dependency] private readonly SharedUserInterfaceSystem _cryoUi = default!;
     [Dependency] private readonly GasCanisterSystem _gasCanisterSystem = default!;
     [Dependency] private readonly GasAnalyzerSystem _gasAnalyzerSystem = default!;
     [Dependency] private readonly HealthAnalyzerSystem _healthAnalyzerSystem = default!;
@@ -34,7 +36,7 @@ public sealed partial class CryoPodSystem : SharedCryoPodSystem
 
         while (query.MoveNext(out var uid, out _, out var cryoPod))
         {
-            if (Timing.CurTime < cryoPod.NextUiUpdateTime)
+            if (_cryoTiming.CurTime < cryoPod.NextUiUpdateTime)
                 continue;
 
             cryoPod.NextUiUpdateTime += cryoPod.UiUpdateInterval;
@@ -45,8 +47,10 @@ public sealed partial class CryoPodSystem : SharedCryoPodSystem
 
     protected override void UpdateUi(Entity<CryoPodComponent> entity)
     {
-        if (!UI.IsUiOpen(entity.Owner, CryoPodUiKey.Key)
+        if (!_cryoUi.IsUiOpen(entity.Owner, CryoPodUiKey.Key)
             || !TryComp(entity, out CryoPodAirComponent? air))
+            return;
+        if (!TryComp(entity, out CryoPodAirComponent? air))
             return;
 
         var patient = entity.Comp.BodyContainer.ContainedEntity;
@@ -56,10 +60,10 @@ public sealed partial class CryoPodSystem : SharedCryoPodSystem
         var health = _healthAnalyzerSystem.GetHealthAnalyzerUiState(patient);
         health.ScanMode = true;
 
-        UI.ServerSendUiMessage(
+        _cryoUi.ServerSendUiMessage(
             entity.Owner,
             CryoPodUiKey.Key,
-            new CryoPodUserMessage(gasMix, health, beakerCapacity, beaker, injecting)
+            new CryoPodUserMessage(gasMix, health, beakerCapacity, beaker, injecting, hasDamage: false)
         );
     }
 
@@ -96,4 +100,18 @@ public sealed partial class CryoPodSystem : SharedCryoPodSystem
             args.GasMixtures.Add((entity.Comp.PortName, portAirLocal));
         }
     }
+    // Sunrise edit start
+    private (FixedPoint2? capacity, List<ReagentQuantity>? reagents) GetBeakerInfo(Entity<CryoPodComponent> entity)
+    {
+        // TODO: implement chemical beaker support
+        return (null, null);
+    }
+
+    private List<ReagentQuantity>? GetInjectingReagents(Entity<CryoPodComponent> entity)
+    {
+        // TODO: implement injecting reagent list
+        return null;
+
+    }
+    //Sunrise edit end
 }

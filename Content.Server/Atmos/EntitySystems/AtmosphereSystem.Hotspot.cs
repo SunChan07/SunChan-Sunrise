@@ -132,7 +132,7 @@ public sealed partial class AtmosphereSystem
                     cleanable: true);
             }
 
-            if (tile.Air.Temperature > Atmospherics.FireMinimumTemperatureToSpread)
+            if (tile.Air?.Temperature > Atmospherics.FireMinimumTemperatureToSpread)
             {
                 var radiatedTemperature = tile.Air.Temperature * Atmospherics.FireSpreadRadiosityScale;
                 foreach (var otherTile in tile.AdjacentTiles)

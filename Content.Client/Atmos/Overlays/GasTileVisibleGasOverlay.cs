@@ -69,7 +69,6 @@ public sealed class GasTileVisibleGasOverlay : Overlay
         _gasTileOverlaySystem = _entManager.System<SharedGasTileOverlaySystem>();
         _spriteSystem = _entManager.System<SpriteSystem>();
 
-        _shader = _protoManager.Index(UnshadedShader).Instance();
         ZIndex = GasOverlayZIndex;
 
         _gasCount = _gasTileOverlaySystem.VisibleGasId.Length;
@@ -145,8 +144,8 @@ public sealed class GasTileVisibleGasOverlay : Overlay
                 _frameCounter,
                 overlayQuery,
                 xformQuery,
-                _xformSys),
-            _isTransparent;
+                _xformSys,
+                _isTransparent);
 
         var mapUid = _mapSystem.GetMapOrInvalid(args.MapId);
 

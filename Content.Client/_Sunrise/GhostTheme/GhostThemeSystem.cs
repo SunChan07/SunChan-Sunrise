@@ -1,6 +1,7 @@
 // © SUNRISE, An EULA/CLA with a hosting restriction, full text: https://github.com/space-sunrise/space-station-14/blob/master/CLA.txt
 using Content.Shared._Sunrise.GhostTheme;
 using Content.Shared.DrawDepth;
+using ContentDrawDepth = Content.Shared.DrawDepth.DrawDepth;
 using Content.Shared.Weapons.Ranged.Systems; // EffectLayers
 using Robust.Client.GameObjects;
 using Robust.Shared.Prototypes;
@@ -23,9 +24,9 @@ public sealed class GhostThemeSystem : EntitySystem
             || !_prototypeManager.TryIndex<GhostThemePrototype>(component.GhostTheme, out var ghostThemePrototype))
             return;
 
-        if (!TryComp(uid, out SpriteComponent sprite))
+        if (!TryComp(uid, out SpriteComponent? sprite))
             return;
-        
+
         if (!sprite.LayerMapTryGet(EffectLayers.Unshaded, out var layer))
             layer = sprite.LayerMapReserveBlank(EffectLayers.Unshaded);
 
@@ -33,8 +34,8 @@ public sealed class GhostThemeSystem : EntitySystem
         sprite.LayerSetShader(layer, "unshaded");
         sprite.LayerSetColor(layer, ghostThemePrototype.SpriteColor);
         sprite.LayerSetScale(layer, ghostThemePrototype.Scale);
-        
-        sprite.DrawDepth = DrawDepth.Default + 13;
+
+        sprite.DrawDepth = (int)ContentDrawDepth.Ghosts;
         sprite.OverrideContainerOcclusion = true;
         sprite.NoRotation = true;
     }
