@@ -11,8 +11,9 @@ using Content.Shared.Chemistry.Reagent;
 using Content.Shared.FixedPoint;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
-using Content.Server.Item;
+using Content.Shared.Containers.ItemSlots;
 using Content.Shared.Chemistry.EntitySystems;
+using Content.Shared.Damage;
 
 namespace Content.Server.Medical;
 
@@ -67,10 +68,15 @@ public sealed partial class CryoPodSystem : SharedCryoPodSystem
         var health = _healthAnalyzerSystem.GetHealthAnalyzerUiState(patient);
         health.ScanMode = true;
 
+        // Sunrise edit
+        var hasDamage = patient.HasValue
+                        && TryComp<DamageableComponent>(patient.Value, out var damageable)
+                        && damageable.TotalDamage > FixedPoint2.Zero;
+
         _cryoUi.ServerSendUiMessage(
             entity.Owner,
             CryoPodUiKey.Key,
-            new CryoPodUserMessage(gasMix, health, beakerCapacity, beaker, injecting, hasDamage: false)
+            new CryoPodUserMessage(gasMix, health, beakerCapacity, beaker, injecting, hasDamage: hasDamage)
         );
     }
 
