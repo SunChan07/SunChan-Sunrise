@@ -51,7 +51,7 @@ public abstract partial class SharedAtmosphereSystem
     ///     Speedup scale for heat-capacity calculations, populated from
     ///     <c>CCVars.AtmosHeatScale</c> in server/client CVars files.
     /// </summary>
-    public float HeatScale { get; protected set; } = 1f;
+    public float HeatScale { get; protected set; } = 1.0f;
 
     /// <summary>
     ///     Returns the heat capacity of a gas mixture.
