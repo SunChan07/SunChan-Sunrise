@@ -11,6 +11,7 @@ public sealed partial class AtmosphereSystem : SharedAtmosphereSystem // Sunrise
     {
         base.Initialize();
         SubscribeLocalEvent<MapAtmosphereComponent, ComponentHandleState>(OnMapHandleState);
+        InitializeCVars(); // Sunrise edit
     }
 
     private void OnMapHandleState(EntityUid uid, MapAtmosphereComponent component, ref ComponentHandleState args)
