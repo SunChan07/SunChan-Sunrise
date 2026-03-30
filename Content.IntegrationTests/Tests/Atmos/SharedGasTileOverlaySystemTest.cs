@@ -37,7 +37,7 @@ public sealed class GasTileOverlayTemperatureNetworkingTest : AtmosTest
 
         // Check if the server actually sent the gas chunks
         Assert.That(cOverlay, Is.Not.Null, "Gas overlay is null on the client.");
-        Assert.That(cOverlay.Chunks, Is.Not.Empty, "Gas overlay chunks are empty on the client.");Expand commentComment on line R40Resolved
+        Assert.That(cOverlay.Chunks, Is.Not.Empty, "Gas overlay chunks are empty on the client.");
 
         //Start real tests
         await InjectHotPlasma(ProcessEnt, tileIndices, mixture, 400f);
@@ -76,7 +76,7 @@ public sealed class GasTileOverlayTemperatureNetworkingTest : AtmosTest
             var localY = MathHelper.Mod(indices.Y, SharedGasTileOverlaySystem.ChunkSize);
             int tileIndex = localX + localY * SharedGasTileOverlaySystem.ChunkSize;
 
-            var tile = chunk.TileData[tileIndex];Expand commentComment on line R79Resolved
+            var tile = chunk.TileData[tileIndex];
             tile.ByteGasTemperature.TryGetTemperature(out var actualTemp);
 
             Assert.That(actualTemp, Is.EqualTo(expectedTemp).Within(0.01f), $"Tile at {indices} had wrong temperature!");
