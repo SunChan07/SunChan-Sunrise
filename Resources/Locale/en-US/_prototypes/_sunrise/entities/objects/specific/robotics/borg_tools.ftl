@@ -1,4 +1,4 @@
-ent-PowerCellRobotTool = robot tool power cell
+﻿ent-PowerCellRobotTool = robot tool power cell
     .desc = A small cell that self recharges. Used in robot tools.
 ent-WeaponDisablerBorg = robot disabler
     .desc = A self-defense weapon that exhausts organic targets, weakening them until they collapse.
