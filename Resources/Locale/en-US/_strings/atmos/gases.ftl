@@ -1,8 +1,4 @@
 gas-oxygen = Oxygen
-
-
-
-
 gas-oxygen-abbreviation = O₂
 gas-nitrogen = Nitrogen
 gas-nitrogen-abbreviation = N₂

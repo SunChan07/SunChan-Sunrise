@@ -119,7 +119,4 @@ public sealed partial class GasPrototype : IPrototype
     /// </summary>
     [DataField]
     public bool IsOxidizer;
-
-    [DataField("specificHeat")]
-    public float SpecificHeat = 20f; // дефолт на случай отсутствия в YAML
 }
