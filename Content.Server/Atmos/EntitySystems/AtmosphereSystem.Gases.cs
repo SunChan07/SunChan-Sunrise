@@ -527,9 +527,6 @@ namespace Content.Server.Atmos.EntitySystems
 
         // ---- Sunrise shim API ---- //
 
-        public float GetHeatCapacity(GasMixture mixture, bool applyScaling = false)
-            => GetHeatCapacityCalculation(mixture.Moles, mixture.Immutable);
-
         public float GetThermalEnergy(GasMixture mixture)
             => mixture.Temperature * GetHeatCapacity(mixture);
 
