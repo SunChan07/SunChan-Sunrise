@@ -1,4 +1,5 @@
 using Content.Shared.Atmos;
+using Robust.Shared.GameStates;
 
 namespace Content.Shared.Temperature.Components;
 
@@ -6,7 +7,7 @@ namespace Content.Shared.Temperature.Components;
 /// Handles changing temperature,
 /// informing others of the current temperature.
 /// </summary>
-[RegisterComponent, NetworkedComponent]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class TemperatureComponent : Component
 {
     /// <summary>
