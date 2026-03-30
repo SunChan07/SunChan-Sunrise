@@ -41,8 +41,9 @@
   color: '#8B4513'
   reagent: Nitrium
   pricePerMole: 12
-  gasOverlaySprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-  gasOverlayState: nitriumGas
+  gasOverlaySprite:
+    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
+    state: nitriumGas
 
 - type: gas
   id: Pluoxium
@@ -54,8 +55,6 @@
   color: '#0054AA'
   reagent: Pluoxium
   pricePerMole: 5
-  gasOverlaySprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-  gasOverlayState: pluoxium
 
 - type: gas
   id: Hydrogen
@@ -81,8 +80,9 @@
   color: '#33cccc'
   reagent: Hyper-Noblium
   pricePerMole: 15
-  gasOverlaySprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-  gasOverlayState: hyper_noblium
+  gasOverlaySprite:
+    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
+    state: hyper_noblium
   isFuel: true
 
 - type: gas
@@ -97,8 +97,9 @@
   color: '#009933'
   reagent: Proto-Nitrate
   pricePerMole: 5
-  gasOverlaySprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-  gasOverlayState: proto_nitrate
+  gasOverlaySprite:
+    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
+    state: proto_nitrate
 
 - type: gas
   id: Zauker
@@ -112,8 +113,9 @@
   color: '#1c1a1a'
   reagent: Zauker
   pricePerMole: 15
-  gasOverlaySprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-  gasOverlayState: zauker
+  gasOverlaySprite:
+    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
+    state: zauker
 
 - type: gas
   id: Halon
@@ -127,8 +129,9 @@
   color: '#e3574d'
   reagent: Halon
   pricePerMole: 8
-  gasOverlaySprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-  gasOverlayState: halon
+  gasOverlaySprite:
+    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
+    state: halon
 
 - type: gas
   id: Helium
@@ -154,8 +157,9 @@
   color: '#525151'
   reagent: Anti-Noblium
   pricePerMole: 20
-  gasOverlaySprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-  gasOverlayState: anti_noblium
+  gasOverlaySprite:
+    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
+    state: anti_noblium
 
 - type: gas
   id: Electrovae
@@ -164,8 +168,9 @@
   molarHeatCapacity: 250
   heatCapacityRatio: 1.28
   molarMass: 520
-  gasOverlaySprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-  gasOverlayState: electrovae
+  gasOverlaySprite:
+    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
+    state: electrovae
   gasMolesVisible: 0.1
   gasVisbilityFactor: 2.0
   color: '#0022ff'
@@ -179,8 +184,9 @@
   molarHeatCapacity: 150
   heatCapacityRatio: 1.30
   molarMass: 520
-  gasOverlaySprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-  gasOverlayState: electrovae_charged
+  gasOverlaySprite:
+    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
+    state: electrovae_charged
   gasMolesVisible: 1.0
   gasVisbilityFactor: 3.0
   color: '#ddff00'
