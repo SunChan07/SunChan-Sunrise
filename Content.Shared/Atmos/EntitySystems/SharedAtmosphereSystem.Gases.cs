@@ -23,7 +23,7 @@ public abstract partial class SharedAtmosphereSystem
             var proto = GasPrototypes[i];
             GasFuelMask[i]      = proto.IsFuel      ? 1f : 0f;
             GasOxidizerMask[i]  = proto.IsOxidizer  ? 1f : 0f;
-            GasSpecificHeats[i] = proto.SpecificHeat;
+            GasSpecificHeats[i] = proto.MolarHeatCapacity;
         }
     }
 
