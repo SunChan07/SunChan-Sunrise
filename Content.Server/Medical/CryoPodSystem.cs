@@ -7,6 +7,10 @@ using Content.Server.NodeContainer.NodeGroups;
 using Content.Server.NodeContainer.Nodes;
 using Content.Shared.Atmos;
 using Content.Shared.Medical.Cryogenics;
+using Content.Shared.Chemistry.Reagent;
+using Robust.Shared.Timing;
+using Robust.Shared.Utility;
+
 namespace Content.Server.Medical;
 
 public sealed partial class CryoPodSystem : SharedCryoPodSystem
@@ -49,8 +53,6 @@ public sealed partial class CryoPodSystem : SharedCryoPodSystem
     {
         if (!_cryoUi.IsUiOpen(entity.Owner, CryoPodUiKey.Key)
             || !TryComp(entity, out CryoPodAirComponent? air))
-            return;
-        if (!TryComp(entity, out CryoPodAirComponent? air))
             return;
 
         var patient = entity.Comp.BodyContainer.ContainedEntity;
