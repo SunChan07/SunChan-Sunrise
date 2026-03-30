@@ -6,11 +6,18 @@ namespace Content.Client.Atmos.EntitySystems;
 public sealed partial class AtmosphereSystem
 {
     [Dependency] private readonly IConfigurationManager _cfg = default!;
+    private readonly Subscriptions _subs = new();
 
     private void InitializeCVars()
     {
-        // AtmosHeatScale is SERVERONLY but IS replicated to clients.
-        // invokeImmediately: true ensures HeatScale is set before any test/game logic runs.
-        Subs.CVar(_cfg, CCVars.AtmosHeatScale, value => HeatScale = value, true);
+        _subs.CVar(_cfg, CCVars.AtmosHeatScale,
+            v => HeatScale = MathF.Max(0.000001f, v),
+            invokeImmediately: true);
+    }
+
+    public override void Shutdown()
+    {
+        _subs.Dispose();
+        base.Shutdown();
     }
 }
