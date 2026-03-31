@@ -4,12 +4,15 @@ using Content.Shared.Atmos.EntitySystems;
 using JetBrains.Annotations;
 using Robust.Shared.GameStates;
 using System.Linq;
+using Robust.Shared.Timing;
 
 namespace Content.Client.Atmos.EntitySystems;
 
 [UsedImplicitly]
 public sealed class GasTileOverlaySystem : SharedGasTileOverlaySystem
 {
+    [Dependency] private readonly IGameTiming _timing = default!;
+
     public override void Initialize()
     {
         base.Initialize();
@@ -53,6 +56,7 @@ public sealed class GasTileOverlaySystem : SharedGasTileOverlaySystem
         foreach (var (index, data) in modifiedChunks)
         {
             comp.Chunks[index] = data;
+            data.LastUpdate = _timing.CurTick;
         }
     }
 
@@ -81,6 +85,7 @@ public sealed class GasTileOverlaySystem : SharedGasTileOverlaySystem
             foreach (var chunkData in gridData)
             {
                 comp.Chunks[chunkData.Index] = chunkData;
+                chunkData.LastUpdate = _timing.CurTick;
             }
         }
     }

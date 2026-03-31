@@ -1,3 +1,5 @@
+light_mode = unshaded;
+
 uniform sampler2D SCREEN_TEXTURE;
 uniform highp float intensity; // 0.0..1.0
 
@@ -22,6 +24,6 @@ void fragment() {
     col += texture(SCREEN_TEXTURE, UV + vec2( SCREEN_PIXEL_SIZE.x * scale, -SCREEN_PIXEL_SIZE.y * scale)).xyz * 0.04;
     col += texture(SCREEN_TEXTURE, UV + vec2(-SCREEN_PIXEL_SIZE.x * scale, -SCREEN_PIXEL_SIZE.y * scale)).xyz * 0.04;
 
-    highp vec4 origColor = zTexture(UV);
-    COLOR = vec4(col, origColor.a);
+    highp float origAlpha = texture(SCREEN_TEXTURE, UV).a;
+    COLOR = vec4(col, origAlpha);
 }
