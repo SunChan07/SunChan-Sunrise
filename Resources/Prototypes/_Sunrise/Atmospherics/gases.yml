@@ -11,8 +11,9 @@
   color: '#9370db'
   reagent: BZ
   pricePerMole: 3
-  gasOverlaySprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-  gasOverlayState: bz
+  gasOverlaySprite:
+    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
+    state: bz
 
 - type: gas
   id: Healium
@@ -26,8 +27,9 @@
   color: '#8b0000'
   reagent: Healium
   pricePerMole: 12
-  gasOverlaySprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-  gasOverlayState: healium
+  gasOverlaySprite:
+    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
+    state: healium
 
 - type: gas
   id: Nitrium
