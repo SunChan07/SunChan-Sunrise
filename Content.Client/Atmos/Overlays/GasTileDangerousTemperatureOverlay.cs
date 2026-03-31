@@ -179,7 +179,7 @@ public sealed class GasTileDangerousTemperatureOverlay : Overlay
         if (_thermalAccum < ThermalUpdateInterval && res.TemperatureTarget != null
                                                   && res.LastRenderedTick != GameTick.Zero)
         {
-            return true; // Draw() выведет старый кэш, rebuild не запускаем
+            return true;
         }
 
         var worldAABB = args.WorldAABB;
