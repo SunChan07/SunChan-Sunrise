@@ -238,9 +238,11 @@ namespace Content.Server.Atmos.EntitySystems
                 changed = true;
                 oldData = new GasOverlayData(tile.Hotspot.State, new byte[VisibleGasId.Length], newByteTemp);
             }
-            else if (oldData.FireState != tile.Hotspot.State ||
-                     (Math.Abs(newByte.Value - oldByte.Value) <= _thermalDirtyThreshold) return; || // Dirty Temperature when there is more then 1 byte difference. That should measure up to minimum 4 degreese difference, 6 degreese on average.
-                     (oldData.ByteGasTemperature.Value != newByteTemp.Value && newByteTemp.Value > ThermalByte.TempResolution)) // change of special ThermalByte value
+            else if (
+                oldData.FireState != tile.Hotspot.State ||
+                Math.Abs(newByteTemp.Value - oldData.ByteGasTemperature.Value) > _thermalDirtyThreshold ||
+                (oldData.ByteGasTemperature.Value != newByteTemp.Value &&
+                 newByteTemp.Value > ThermalByte.TempResolution)) // change of special ThermalByte value
             {
                 changed = true;
                 oldData = new GasOverlayData(tile.Hotspot.State, oldData.Opacity, newByteTemp);
