@@ -10,6 +10,7 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.ObjectPool;
 using Robust.Server.Player;
 using Robust.Shared;
+using Robust.Shared.Configuration;
 using Robust.Shared.Enums;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
@@ -23,6 +24,10 @@ using System.Runtime.CompilerServices;
 
 namespace Content.Server.Atmos.EntitySystems
 {
+    [Dependency] private readonly IConfigurationManager _cfg = default!;
+
+    private int _thermalDirtyThreshold = 1;
+
     [UsedImplicitly]
     public sealed class GasTileOverlaySystem : SharedGasTileOverlaySystem
     {
@@ -63,6 +68,10 @@ namespace Content.Server.Atmos.EntitySystems
         public override void Initialize()
         {
             base.Initialize();
+
+            _cfg.OnValueChanged(CCVars.GasOverlayThermalDirtyThreshold,
+                v => _thermalDirtyThreshold = Math.Clamp(v, 0, 255),
+                invokeImmediately: true);
 
             _query = GetEntityQuery<GasTileOverlayComponent>();
             _gridQuery = GetEntityQuery<MapGridComponent>();
@@ -235,7 +244,7 @@ namespace Content.Server.Atmos.EntitySystems
                 oldData = new GasOverlayData(tile.Hotspot.State, new byte[VisibleGasId.Length], newByteTemp);
             }
             else if (oldData.FireState != tile.Hotspot.State ||
-                     Math.Abs(oldData.ByteGasTemperature.Value - newByteTemp.Value) > 2 || // Dirty Temperature when there is more then 1 byte difference. That should measure up to minimum 4 degreese difference, 6 degreese on average.
+                     (Math.Abs(newByteTemp.Value - oldData.ByteGasTemperature.Value) > _thermalDirtyThreshold) // Dirty Temperature when there is more then 1 byte difference. That should measure up to minimum 4 degreese difference, 6 degreese on average.
                      (oldData.ByteGasTemperature.Value != newByteTemp.Value && newByteTemp.Value > ThermalByte.TempResolution)) // change of special ThermalByte value
             {
                 changed = true;
