@@ -12,20 +12,19 @@ using Robust.Server.Player;
 using Robust.Shared;
 using Robust.Shared.Configuration;
 using Robust.Shared.Enums;
+using Robust.Shared.IoC;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Player;
 using Robust.Shared.Threading;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
-using System.Runtime.CompilerServices;
 
 // ReSharper disable once RedundantUsingDirective
 
 namespace Content.Server.Atmos.EntitySystems
 {
     [Dependency] private readonly IConfigurationManager _cfg = default!;
-
     private int _thermalDirtyThreshold = 1;
 
     [UsedImplicitly]
@@ -68,10 +67,6 @@ namespace Content.Server.Atmos.EntitySystems
         public override void Initialize()
         {
             base.Initialize();
-
-            _cfg.OnValueChanged(CCVars.GasOverlayThermalDirtyThreshold,
-                v => _thermalDirtyThreshold = Math.Clamp(v, 0, 255),
-                invokeImmediately: true);
 
             _query = GetEntityQuery<GasTileOverlayComponent>();
             _gridQuery = GetEntityQuery<MapGridComponent>();
@@ -244,7 +239,7 @@ namespace Content.Server.Atmos.EntitySystems
                 oldData = new GasOverlayData(tile.Hotspot.State, new byte[VisibleGasId.Length], newByteTemp);
             }
             else if (oldData.FireState != tile.Hotspot.State ||
-                     (Math.Abs(newByteTemp.Value - oldData.ByteGasTemperature.Value) > _thermalDirtyThreshold) // Dirty Temperature when there is more then 1 byte difference. That should measure up to minimum 4 degreese difference, 6 degreese on average.
+                     (Math.Abs(newByte.Value - oldByte.Value) <= _thermalDirtyThreshold) return; || // Dirty Temperature when there is more then 1 byte difference. That should measure up to minimum 4 degreese difference, 6 degreese on average.
                      (oldData.ByteGasTemperature.Value != newByteTemp.Value && newByteTemp.Value > ThermalByte.TempResolution)) // change of special ThermalByte value
             {
                 changed = true;
