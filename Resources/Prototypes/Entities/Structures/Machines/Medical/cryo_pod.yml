@@ -119,12 +119,12 @@
     guides:
     - Cryogenics
 
-  - type: entity
-    parent: BaseMachine
-    id: CryoPodDestroyed
-    name: destroyed cryo pod
-    description: A cryo pod that has seen better days. It's entirely inoperable; not good for anything but scrap.
-    components:
+- type: entity
+  parent: BaseMachine
+  id: CryoPodDestroyed
+  name: destroyed cryo pod
+  description: A cryo pod that has seen better days. It's entirely inoperable; not good for anything but scrap.
+  components:
     - type: Sprite
       sprite: Structures/Machines/Medical/cryopod.rsi
       drawdepth: Mobs
