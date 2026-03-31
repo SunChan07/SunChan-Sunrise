@@ -1,6 +1,7 @@
 ﻿using Content.Shared.CCVar;
 using Content.Shared.Chemistry.Reagent;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization;
 using Robust.Shared.Utility;
 
 namespace Content.Shared.Atmos.Prototypes;
@@ -13,7 +14,7 @@ namespace Content.Shared.Atmos.Prototypes;
 /// If you add any new ones, make sure to also adjust the constants in <see cref="Atmospherics"/> accordingly.
 /// </remarks>
 [Prototype]
-public sealed partial class GasPrototype : IPrototype
+public sealed partial class GasPrototype : IPrototype, ISerializationHooks
 {
     // TODO: Add interfaces for gas behaviours e.g. breathing, burning
 
@@ -119,5 +120,14 @@ public sealed partial class GasPrototype : IPrototype
     /// </summary>
     [DataField]
     public bool IsOxidizer;
+
+    [DataField("gasOverlayTexture")] public string? GasOverlayTexture;
+    [DataField("gasOverlayState")] public string? GasOverlayState;
+
+    void ISerializationHooks.AfterDeserialization()
+    {
+        if (GasOverlayTexture != null && GasOverlayState != null)
+            GasOverlaySprite = new SpriteSpecifier.Rsi(new ResPath(GasOverlayTexture), GasOverlayState);
+    }
 
 }

@@ -11,9 +11,8 @@
   color: '#9370db'
   reagent: BZ
   pricePerMole: 3
-  gasOverlayTexture:
-    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-    state: bz
+  gasOverlayTexture: /Textures/_Sunrise/Effects/atmospherics.rsi
+  gasOverlayState: bz
 
 - type: gas
   id: Healium
@@ -27,9 +26,8 @@
   color: '#8b0000'
   reagent: Healium
   pricePerMole: 12
-  gasOverlayTexture:
-    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-    state: healium
+  gasOverlayTexture: /Textures/_Sunrise/Effects/atmospherics.rsi
+  gasOverlayState: healium
 
 - type: gas
   id: Nitrium
@@ -43,9 +41,8 @@
   color: '#8B4513'
   reagent: Nitrium
   pricePerMole: 12
-  gasOverlayTexture:
-    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-    state: nitriumGas
+  gasOverlayTexture: /Textures/_Sunrise/Effects/atmospherics.rsi
+  gasOverlayState: nitriumGas
 
 - type: gas
   id: Pluoxium
@@ -82,9 +79,8 @@
   color: '#33cccc'
   reagent: Hyper-Noblium
   pricePerMole: 15
-  gasOverlayTexture:
-    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-    state: hyper_noblium
+  gasOverlayTexture: /Textures/_Sunrise/Effects/atmospherics.rsi
+  gasOverlayState: hyper_noblium
   isFuel: true
 
 - type: gas
@@ -99,9 +95,8 @@
   color: '#009933'
   reagent: Proto-Nitrate
   pricePerMole: 5
-  gasOverlayTexture:
-    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-    state: proto_nitrate
+  gasOverlayTexture: /Textures/_Sunrise/Effects/atmospherics.rsi
+  gasOverlayState: proto_nitrate
 
 - type: gas
   id: Zauker
@@ -115,9 +110,8 @@
   color: '#1c1a1a'
   reagent: Zauker
   pricePerMole: 15
-  gasOverlayTexture:
-    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-    state: zauker
+  gasOverlayTexture: /Textures/_Sunrise/Effects/atmospherics.rsi
+  gasOverlayState: zauker
 
 - type: gas
   id: Halon
@@ -131,9 +125,8 @@
   color: '#e3574d'
   reagent: Halon
   pricePerMole: 8
-  gasOverlayTexture:
-    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-    state: halon
+  gasOverlayTexture: /Textures/_Sunrise/Effects/atmospherics.rsi
+  gasOverlayState: halon
 
 - type: gas
   id: Helium
@@ -159,9 +152,8 @@
   color: '#525151'
   reagent: Anti-Noblium
   pricePerMole: 20
-  gasOverlayTexture:
-    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-    state: anti_noblium
+  gasOverlayTexture: /Textures/_Sunrise/Effects/atmospherics.rsi
+  gasOverlayState: anti_noblium
 
 - type: gas
   id: Electrovae
@@ -170,9 +162,8 @@
   molarHeatCapacity: 250
   heatCapacityRatio: 1.28
   molarMass: 520
-  gasOverlayTexture:
-    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-    state: electrovae
+  gasOverlayTexture: /Textures/_Sunrise/Effects/atmospherics.rsi
+  gasOverlayState: electrovae
   gasMolesVisible: 0.1
   gasVisibilityFactor: 2.0
   color: '#0022ff'
@@ -186,9 +177,8 @@
   molarHeatCapacity: 150
   heatCapacityRatio: 1.30
   molarMass: 520
-  gasOverlayTexture:
-    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-    state: electrovae_charged
+  gasOverlayTexture: /Textures/_Sunrise/Effects/atmospherics.rsi
+  gasOverlayState: electrovae_charged
   gasMolesVisible: 1.0
   gasVisibilityFactor: 3.0
   color: '#ddff00'
