@@ -120,6 +120,4 @@ public sealed partial class GasPrototype : IPrototype
     [DataField]
     public bool IsOxidizer;
 
-    [DataField("gasOverlayTexture")] public string? GasOverlayTexture;
-    [DataField("gasOverlayState")] public string? GasOverlayState;
 }
