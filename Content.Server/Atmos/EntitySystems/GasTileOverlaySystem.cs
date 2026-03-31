@@ -19,17 +19,19 @@ using Robust.Shared.Player;
 using Robust.Shared.Threading;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
+using System.Runtime.CompilerServices;
 
 // ReSharper disable once RedundantUsingDirective
 
 namespace Content.Server.Atmos.EntitySystems
 {
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
-    private int _thermalDirtyThreshold = 1;
 
     [UsedImplicitly]
     public sealed class GasTileOverlaySystem : SharedGasTileOverlaySystem
     {
+        [Robust.Shared.IoC.Dependency] private readonly IConfigurationManager _cfg = default!;
+        private int _thermalDirtyThreshold = 1;
+
         [Robust.Shared.IoC.Dependency] private readonly IGameTiming _gameTiming = default!;
         [Robust.Shared.IoC.Dependency] private readonly IPlayerManager _playerManager = default!;
         [Robust.Shared.IoC.Dependency] private readonly IMapManager _mapManager = default!;
@@ -242,7 +244,7 @@ namespace Content.Server.Atmos.EntitySystems
                 oldData.FireState != tile.Hotspot.State ||
                 Math.Abs(newByteTemp.Value - oldData.ByteGasTemperature.Value) > _thermalDirtyThreshold ||
                 (oldData.ByteGasTemperature.Value != newByteTemp.Value &&
-                 newByteTemp.Value > ThermalByte.TempResolution)) // change of special ThermalByte value
+                 newByteTemp.Value > ThermalByte.TempResolution))
             {
                 changed = true;
                 oldData = new GasOverlayData(tile.Hotspot.State, oldData.Opacity, newByteTemp);
