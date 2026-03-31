@@ -11,8 +11,9 @@
   color: '#9370db'
   reagent: BZ
   pricePerMole: 3
-  gasOverlaySprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-  gasOverlayState: bz
+  gasOverlaySprite:
+    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
+    state: bz
 
 - type: gas
   id: Healium
@@ -22,12 +23,13 @@
   heatCapacityRatio: 1.3
   molarMass: 40
   gasMolesVisible: 0.1
-  gasVisbilityFactor: 500
+  gasVisibilityFactor: 500
   color: '#8b0000'
   reagent: Healium
   pricePerMole: 12
-  gasOverlaySprite: /Textures/_Sunrise/Effects/atmospherics.rsi
-  gasOverlayState: healium
+  gasOverlaySprite:
+    sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
+    state: healium
 
 - type: gas
   id: Nitrium
@@ -37,7 +39,7 @@
   heatCapacityRatio: 1.3
   molarMass: 60
   gasMolesVisible: 0.1
-  gasVisbilityFactor: 500
+  gasVisibilityFactor: 500
   color: '#8B4513'
   reagent: Nitrium
   pricePerMole: 12
@@ -76,7 +78,7 @@
   heatCapacityRatio: 1.3
   molarMass: 150
   gasMolesVisible: 0.1
-  gasVisbilityFactor: 1000
+  gasVisibilityFactor: 1000
   color: '#33cccc'
   reagent: Hyper-Noblium
   pricePerMole: 15
@@ -93,7 +95,7 @@
   heatCapacityRatio: 1.3
   molarMass: 120
   gasMolesVisible: 0.1
-  gasVisbilityFactor: 1000
+  gasVisibilityFactor: 1000
   color: '#009933'
   reagent: Proto-Nitrate
   pricePerMole: 5
@@ -109,7 +111,7 @@
   heatCapacityRatio: 1.3
   molarMass: 110
   gasMolesVisible: 0.1
-  gasVisbilityFactor: 250
+  gasVisibilityFactor: 250
   color: '#1c1a1a'
   reagent: Zauker
   pricePerMole: 15
@@ -125,7 +127,7 @@
   heatCapacityRatio: 1.3
   molarMass: 150
   gasMolesVisible: 0.1
-  gasVisbilityFactor: 500
+  gasVisibilityFactor: 500
   color: '#e3574d'
   reagent: Halon
   pricePerMole: 8
@@ -153,7 +155,7 @@
   heatCapacityRatio: 1
   molarMass: 200
   gasMolesVisible: 0.1
-  gasVisbilityFactor: 100
+  gasVisibilityFactor: 100
   color: '#525151'
   reagent: Anti-Noblium
   pricePerMole: 20
@@ -172,7 +174,7 @@
     sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
     state: electrovae
   gasMolesVisible: 0.1
-  gasVisbilityFactor: 2.0
+  gasVisibilityFactor: 2.0
   color: '#0022ff'
   reagent: Electrovae
   pricePerMole: 0.05
@@ -188,7 +190,7 @@
     sprite: /Textures/_Sunrise/Effects/atmospherics.rsi
     state: electrovae_charged
   gasMolesVisible: 1.0
-  gasVisbilityFactor: 3.0
+  gasVisibilityFactor: 3.0
   color: '#ddff00'
   reagent: ChargedElectrovae
   pricePerMole: 1.2

@@ -10,7 +10,9 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.ObjectPool;
 using Robust.Server.Player;
 using Robust.Shared;
+using Robust.Shared.Configuration;
 using Robust.Shared.Enums;
+using Robust.Shared.IoC;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Player;
@@ -23,9 +25,13 @@ using System.Runtime.CompilerServices;
 
 namespace Content.Server.Atmos.EntitySystems
 {
+
     [UsedImplicitly]
     public sealed class GasTileOverlaySystem : SharedGasTileOverlaySystem
     {
+        [Robust.Shared.IoC.Dependency] private readonly IConfigurationManager _cfg = default!;
+        private int _thermalDirtyThreshold = 1;
+
         [Robust.Shared.IoC.Dependency] private readonly IGameTiming _gameTiming = default!;
         [Robust.Shared.IoC.Dependency] private readonly IPlayerManager _playerManager = default!;
         [Robust.Shared.IoC.Dependency] private readonly IMapManager _mapManager = default!;
@@ -234,9 +240,11 @@ namespace Content.Server.Atmos.EntitySystems
                 changed = true;
                 oldData = new GasOverlayData(tile.Hotspot.State, new byte[VisibleGasId.Length], newByteTemp);
             }
-            else if (oldData.FireState != tile.Hotspot.State ||
-                     Math.Abs(oldData.ByteGasTemperature.Value - newByteTemp.Value) > 2 || // Dirty Temperature when there is more then 1 byte difference. That should measure up to minimum 4 degreese difference, 6 degreese on average.
-                     (oldData.ByteGasTemperature.Value != newByteTemp.Value && newByteTemp.Value > ThermalByte.TempResolution)) // change of special ThermalByte value
+            else if (
+                oldData.FireState != tile.Hotspot.State ||
+                Math.Abs(newByteTemp.Value - oldData.ByteGasTemperature.Value) > _thermalDirtyThreshold ||
+                (oldData.ByteGasTemperature.Value != newByteTemp.Value &&
+                 newByteTemp.Value > ThermalByte.TempResolution))
             {
                 changed = true;
                 oldData = new GasOverlayData(tile.Hotspot.State, oldData.Opacity, newByteTemp);
