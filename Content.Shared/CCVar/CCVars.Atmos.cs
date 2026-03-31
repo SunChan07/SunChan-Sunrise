@@ -178,4 +178,7 @@ public static partial class CCVars
     /// </summary>
     public static readonly CVarDef<int> DeltaPressureParallelBatchSize =
         CVarDef.Create("atmos.delta_pressure_parallel_batch_size", 10, CVar.SERVERONLY);
+
+    public static readonly CVarDef<int> GasOverlayThermalDirtyThreshold =
+        CVarDef.Create("atmos.overlay_thermal_dirty_threshold", 1, CVar.SERVERONLY);
 }

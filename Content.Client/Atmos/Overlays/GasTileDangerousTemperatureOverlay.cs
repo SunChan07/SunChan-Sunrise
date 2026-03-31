@@ -8,6 +8,7 @@ using Robust.Shared.Enums;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using System.Numerics;
+using Robust.Shared.Timing;
 
 namespace Content.Client.Atmos.Overlays;
 
@@ -21,6 +22,15 @@ public sealed class GasTileDangerousTemperatureOverlay : Overlay
     [Dependency] private readonly IEntityManager _entManager = default!;
     [Dependency] private readonly IMapManager _mapManager = default!;
     [Dependency] private readonly IClyde _clyde = default!;
+    [Dependency] private readonly IGameTiming _timing = default!;
+
+    private const float ThermalUpdateInterval = 0.1f;
+    private float _thermalAccum = 0f;
+
+    protected override void FrameUpdate(FrameEventArgs args)
+    {
+        _thermalAccum += args.DeltaSeconds;
+    }
 
     private GasTileOverlaySystem? _gasTileOverlay;
     private readonly SharedTransformSystem _xformSys;
@@ -162,20 +172,53 @@ public sealed class GasTileDangerousTemperatureOverlay : Overlay
                 target.Size,
                 new RenderTargetFormatParameters(RenderTargetColorFormat.Rgba8Srgb),
                 name: nameof(GasTileDangerousTemperatureOverlay));
+            res.LastRenderedTick = GameTick.Zero;
+            _thermalAccum = ThermalUpdateInterval;
         }
+
+        if (_thermalAccum < ThermalUpdateInterval && res.TemperatureTarget != null
+                                                  && res.LastRenderedTick != GameTick.Zero)
+        {
+            return true; // Draw() выведет старый кэш, rebuild не запускаем
+        }
+
+        var worldAABB = args.WorldAABB;
+        var mapId = args.MapId;
+
+        _grids.Clear();
+        _mapManager.FindGridsIntersecting(mapId, worldAABB, ref _grids);
+
+        if (res.LastRenderedTick != GameTick.Zero)
+        {
+            var anyDirty = false;
+            foreach (var grid in _grids)
+            {
+                if (!_overlayQuery.TryGetComponent(grid.Owner, out var overlayComp))
+                    continue;
+                foreach (var chunk in overlayComp.Chunks.Values)
+                {
+                    if (chunk.LastUpdate > res.LastRenderedTick)
+                    {
+                        anyDirty = true;
+                        break;
+                    }
+                }
+                if (anyDirty) break;
+            }
+            if (!anyDirty)
+                return true;
+        }
+
+        _thermalAccum = 0f;
+        res.LastRenderedTick = _timing.CurTick;
 
         var drawHandle = args.WorldHandle;
         var worldBounds = args.WorldBounds;
-        var worldAABB = args.WorldAABB;
-        var mapId = args.MapId;
         var worldToViewportLocal = args.Viewport.GetWorldToLocalMatrix();
 
         drawHandle.RenderInRenderTarget(res.TemperatureTarget,
             () =>
             {
-                _grids.Clear();
-                _mapManager.FindGridsIntersecting(mapId, worldAABB, ref _grids);
-
                 foreach (var grid in _grids)
                 {
                     if (!_overlayQuery.TryGetComponent(grid.Owner, out var comp))
@@ -244,6 +287,7 @@ public sealed class GasTileDangerousTemperatureOverlay : Overlay
     private sealed class CachedResources : IDisposable
     {
         public IRenderTexture? TemperatureTarget;
+        public GameTick LastRenderedTick = GameTick.Zero;
 
         public void Dispose()
         {
