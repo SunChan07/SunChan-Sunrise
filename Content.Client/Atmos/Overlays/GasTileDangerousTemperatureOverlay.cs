@@ -219,7 +219,8 @@ public sealed class GasTileDangerousTemperatureOverlay : Overlay
         if (renderTarget is null)
             return false;
 
-        drawHandle.RenderInRenderTarget(renderTarget, ...);
+        drawHandle.RenderInRenderTarget(
+            renderTarget,
             () =>
             {
                 foreach (var grid in _grids)
@@ -238,10 +239,10 @@ public sealed class GasTileDangerousTemperatureOverlay : Overlay
                     var floatBounds = worldToGridLocal.TransformBox(worldBounds).Enlarged(grid.Comp.TileSize);
 
                     var localBounds = new Box2i(
-                        (int)MathF.Floor(floatBounds.Left),
-                        (int)MathF.Floor(floatBounds.Bottom),
-                        (int)MathF.Ceiling(floatBounds.Right),
-                        (int)MathF.Ceiling(floatBounds.Top));
+                        (int) MathF.Floor(floatBounds.Left),
+                        (int) MathF.Floor(floatBounds.Bottom),
+                        (int) MathF.Ceiling(floatBounds.Right),
+                        (int) MathF.Ceiling(floatBounds.Top));
 
                     foreach (var chunk in comp.Chunks.Values)
                     {
@@ -253,14 +254,12 @@ public sealed class GasTileDangerousTemperatureOverlay : Overlay
                                 continue;
 
                             var gasColor = _colorCache[tileGas.ByteGasTemperature.Value];
-
                             if (gasColor.A <= 0f)
                                 continue;
 
                             drawHandle.DrawRect(
                                 Box2.CenteredAround(tilePosition + gridTileCenterVec, gridTileSizeVec),
-                                gasColor
-                            );
+                                gasColor);
                         }
                     }
                 }
