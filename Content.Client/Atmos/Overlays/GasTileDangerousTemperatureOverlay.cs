@@ -219,7 +219,7 @@ public sealed class GasTileDangerousTemperatureOverlay : Overlay
         if (renderTarget is null)
             return false;
 
-        drawHandle.RenderInRenderTarget(res.renderTarget,
+        drawHandle.RenderInRenderTarget(renderTarget, ...);
             () =>
             {
                 foreach (var grid in _grids)
