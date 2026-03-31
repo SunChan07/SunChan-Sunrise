@@ -81,7 +81,7 @@
   heatCapacityRatio: 1.4
   molarMass: 44
   gasOverlayTexture: /Textures/Effects/atmospherics.rsi
-  state: miasma
+  gasOverlayState: miasma
   gasMolesVisible: 2
   gasVisibilityFactor: 3.5
   color: '#56941E'
