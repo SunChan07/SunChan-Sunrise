@@ -215,8 +215,11 @@ public sealed class GasTileDangerousTemperatureOverlay : Overlay
         var drawHandle = args.WorldHandle;
         var worldBounds = args.WorldBounds;
         var worldToViewportLocal = args.Viewport.GetWorldToLocalMatrix();
+        var renderTarget = res.TemperatureTarget;
+        if (renderTarget is null)
+            return false;
 
-        drawHandle.RenderInRenderTarget(res.TemperatureTarget,
+        drawHandle.RenderInRenderTarget(res.renderTarget,
             () =>
             {
                 foreach (var grid in _grids)
