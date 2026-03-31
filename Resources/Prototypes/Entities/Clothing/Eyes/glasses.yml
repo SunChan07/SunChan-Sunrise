@@ -250,7 +250,6 @@
   - type: GroupExamine
   - type: IdentityBlocker
     coverage: EYES
-  - type: ThermalSight
 
   # Sunrise-Start
   - type: ToggleClothing
