@@ -41,7 +41,7 @@ namespace Content.Server.Atmos.EntitySystems
             NumericsHelpers.Multiply(moles, GasSpecificHeats, tmp);
             // Adjust heat capacity by speedup, because this is primarily what
             // determines how quickly gases heat up/cool.
-            return MathF.Max(NumericsHelpers.HorizontalAdd(tmp) / MathF.Max(HeatScale, 1e-6f), Atmospherics.MinimumHeatCapacity);
+            return MathF.Max(NumericsHelpers.HorizontalAdd(tmp) / MathF.Max(HeatScale, 1e-6f), Atmospherics.MinimumHeatCapacity); // Sunrise edit
         }
 
         public override bool IsMixtureFuel(GasMixture mixture, float epsilon = Atmospherics.Epsilon)
