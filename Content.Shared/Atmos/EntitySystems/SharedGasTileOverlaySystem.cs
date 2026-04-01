@@ -49,14 +49,7 @@ public abstract class SharedGasTileOverlaySystem : EntitySystem
             return;
         }
 
-        var data = new Dictionary<Vector2i, GasOverlayChunk>();
-        foreach (var (index, chunk) in component.Chunks)
-        {
-            if (chunk.LastUpdate >= args.FromTick)
-                data[index] = chunk;
-        }
-
-        args.State = new GasTileOverlayDeltaState(data, new(component.Chunks.Keys));
+        args.State = new GasTileOverlayState(component.Chunks);
     }
 
     public static Vector2i GetGasChunkIndices(Vector2i indices)

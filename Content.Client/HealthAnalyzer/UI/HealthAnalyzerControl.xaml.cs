@@ -50,10 +50,20 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
             || !_entityManager.TryGetComponent<DamageableComponent>(target, out var damageable))
         {
             NoPatientDataText.Visible = true;
+            // Sunrise edit start
+            PatientDataContainer.Visible = false;
+            AlertsDivider.Visible = false;
+            AlertsContainer.Visible = false;
+            AlertsContainer.RemoveAllChildren();
+            GroupsContainer.RemoveAllChildren();
+            SpriteView.Visible = false;
+            NoDataTex.Visible = true;
+            // Sunrise edit end
             return;
         }
 
         NoPatientDataText.Visible = false;
+        PatientDataContainer.Visible = true; //Sunrise edit
 
         // Scan Mode
 
