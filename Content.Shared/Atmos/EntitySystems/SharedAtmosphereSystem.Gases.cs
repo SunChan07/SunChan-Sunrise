@@ -65,7 +65,7 @@ public abstract partial class SharedAtmosphereSystem
     public float GetHeatCapacity(GasMixture mixture, bool applyScaling = false)
     {
         var raw = GetHeatCapacityCalculation(mixture.Moles, mixture.Immutable);
-        return applyScaling ? raw / HeatScale : raw;
+        return applyScaling && HeatScale > 0f ? raw / HeatScale : raw;
     }
     /// Sunrise end
 }
