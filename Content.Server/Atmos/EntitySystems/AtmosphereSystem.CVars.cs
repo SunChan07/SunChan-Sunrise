@@ -58,7 +58,10 @@ namespace Content.Server.Atmos.EntitySystems
             Subs.CVar(_cfg, CCVars.AtmosHeatScale, value =>
             {
                 if (value <= 0f)
-                    throw new ArgumentException($"AtmosHeatScale must be greater than 0, but got {value}");
+                {
+                    Log.Error($"AtmosHeatScale must be greater than 0, but got {value}. Keeping previous value.");
+                    return;
+                }
                 HeatScale = value;
                 InitializeGases();
             }, true);
