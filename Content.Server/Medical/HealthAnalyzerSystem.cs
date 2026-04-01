@@ -103,7 +103,7 @@ public sealed class HealthAnalyzerSystem : EntitySystem
 
     private void OnDoAfter(Entity<HealthAnalyzerComponent> uid, ref HealthAnalyzerDoAfterEvent args)
     {
-        if (args.Handled || args.Cancelled || args.Target == null || !_cell.HasDrawCharge(uid.Owner, user: args.User))
+        if (args.Handled || args.Cancelled || args.Target == null || !_cell.TryUseActivatableCharge(uid.Owner, user: args.User))
             return;
 
         if (!uid.Comp.Silent)
@@ -185,10 +185,9 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     /// <param name="healthAnalyzer">The health analyzer</param>
     /// <param name="target">The entity being scanned</param>
     /// <param name="scanMode">True makes the UI show ACTIVE, False makes the UI show INACTIVE</param>
-    public void UpdateScannedUser(EntityUid healthAnalyzer, EntityUid target, bool scanMode)
+    public void UpdateScannedUser(EntityUid healthAnalyzer, EntityUid? target, bool scanMode)
     {
-        if (!_uiSystem.HasUi(healthAnalyzer, HealthAnalyzerUiKey.Key)
-            || !HasComp<DamageableComponent>(target))
+        if (!_uiSystem.HasUi(healthAnalyzer, HealthAnalyzerUiKey.Key))
             return;
 
         var uiState = GetHealthAnalyzerUiState(target);
