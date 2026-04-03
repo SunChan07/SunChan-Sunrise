@@ -70,7 +70,7 @@ namespace Content.Server.Atmos.EntitySystems
                 atmosphere.CurrentRunInvalidatedTiles.EnsureCapacity(atmosphere.InvalidatedCoords.Count);
                 // Snapshot and clear before iterating to prevent InvalidOperationException if
                 // UpdateTileData modifies InvalidatedCoords during enumeration.
-                var invalidatedSnapshot = atmosphere.InvalidatedCoords.ToArray();
+                var invalidatedSnapshot = new HashSet<Vector2i>(atmosphere.InvalidatedCoords);
                 atmosphere.InvalidatedCoords.Clear();
                 foreach (var indices in invalidatedSnapshot)
                 {
