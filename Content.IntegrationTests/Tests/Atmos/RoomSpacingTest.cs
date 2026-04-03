@@ -109,7 +109,7 @@ public sealed class RoomSpacingTest : AtmosTest
 
         await Server.WaitPost(() =>
         {
-            for (var i = 0; i < 200; i++) Sunrise-edit
+            for (var i = 0; i < 200; i++) // Sunrise-edit
             {
                 SAtmos.RunProcessingFull(ProcessEnt, MapData.Grid.Owner, SAtmos.AtmosTickRate);
             }
