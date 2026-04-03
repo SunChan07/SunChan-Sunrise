@@ -14,7 +14,7 @@ namespace Content.Client.Atmos.Overlays;
 
 /// <summary>
 /// Renders a thermal heatmap overlay for gas tiles, used for equipment like thermal glasses.
-/// /// </summary>
+/// </summary>
 public sealed class GasTileDangerousTemperatureOverlay : Overlay
 {
     public override bool RequestScreenTexture { get; set; } = false;
@@ -74,7 +74,7 @@ public sealed class GasTileDangerousTemperatureOverlay : Overlay
 
     /// <summary>
     /// Used for Calculating onscreen color from ThermalByte core value
-    /// /// </summary>
+    /// </summary>
     private static Color PreCalculateColor(byte byteTemp)
     {
         // Color Thresholds in Kelvin

@@ -103,8 +103,20 @@ public sealed class HealthAnalyzerSystem : EntitySystem
 
     private void OnDoAfter(Entity<HealthAnalyzerComponent> uid, ref HealthAnalyzerDoAfterEvent args)
     {
-        if (args.Handled || args.Cancelled || args.Target == null || !_cell.TryUseActivatableCharge(uid.Owner, user: args.User))
+        if (args.Handled || args.Cancelled || args.Target == null || Deleted(args.Target.Value))
             return;
+        // Sunrise-edit start
+        if (uid.Comp.MaxScanRange is { } maxRange)
+        {
+            var targetCoords = Transform(args.Target.Value).Coordinates;
+            var analyzerCoords = Transform(uid.Owner).Coordinates;
+            if (!_transformSystem.InRange(targetCoords, analyzerCoords, maxRange))
+                return;
+        }
+
+        if (!_cell.TryUseActivatableCharge(uid.Owner, user: args.User))
+            return;
+        // Sunrise-edit end
 
         if (!uid.Comp.Silent)
             _audio.PlayPvs(uid.Comp.ScanningEndSound, uid);
@@ -220,12 +232,12 @@ public sealed class HealthAnalyzerSystem : EntitySystem
         var bleeding = false;
         var unrevivable = false;
 
-        if (TryComp<BloodstreamComponent>(entity, out var bloodstream) &&
-            _solutionContainerSystem.ResolveSolution(entity, bloodstream.BloodSolutionName,
-                ref bloodstream.BloodSolution, out var bloodSolution))
+        if (TryComp<BloodstreamComponent>(entity, out var bloodstream)) // Sunrise-edit
         {
-            bloodAmount = _bloodstreamSystem.GetBloodLevel(entity);
             bleeding = bloodstream.BleedAmount > 0;
+
+            if (_solutionContainerSystem.ResolveSolution(entity, bloodstream.BloodSolutionName, ref bloodstream.BloodSolution, out _))
+                    bloodAmount = _bloodstreamSystem.GetBloodLevel(entity);
         }
 
         if (TryComp<UnrevivableComponent>(entity, out var unrevivableComp) && unrevivableComp.Analyzable)

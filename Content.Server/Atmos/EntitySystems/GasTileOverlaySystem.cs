@@ -495,6 +495,7 @@ namespace Content.Server.Atmos.EntitySystems
             Subs.CVar(ConfMan, CCVars.NetGasOverlayTickRate, UpdateTickRate, true);
             Subs.CVar(ConfMan, CCVars.GasOverlayThresholds, UpdateThresholds, true);
             Subs.CVar(ConfMan, CVars.NetPVS, OnPvsToggle, true);
+            Subs.CVar(_cfg, CCVars.GasOverlayThermalDirtyThreshold, v => _thermalDirtyThreshold = v, true); // Sunrise-edit
         }
     }
 }

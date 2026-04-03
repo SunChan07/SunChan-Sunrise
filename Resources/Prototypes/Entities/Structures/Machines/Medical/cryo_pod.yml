@@ -105,6 +105,7 @@
   - type: EmptyOnMachineDeconstruct
     containers:
     - scanner-body
+  - type: AntiRottingContainer
   - type: SolutionContainerManager
     solutions:
       injectionBuffer:

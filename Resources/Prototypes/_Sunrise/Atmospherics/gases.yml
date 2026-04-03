@@ -81,7 +81,6 @@
   pricePerMole: 15
   gasOverlayTexture: /Textures/_Sunrise/Effects/atmospherics.rsi
   gasOverlayState: hyper_noblium
-  isFuel: true
 
 - type: gas
   id: ProtoNitrate
@@ -138,7 +137,6 @@
   color: '#005959'
   reagent: Helium
   pricePerMole: 7
-  isFuel: true
 
 - type: gas
   id: AntiNoblium

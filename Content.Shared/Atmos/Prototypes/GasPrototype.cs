@@ -32,8 +32,8 @@ public sealed partial class GasPrototype : IPrototype, ISerializationHooks
     /// The abbreviation of the name. For example O₂ for Oxygen.
     /// Used for UI purposes.
     /// </summary>
-    [DataField(required: true)]
-    public LocId Abbreviation;
+    [DataField]
+    public LocId? Abbreviation;
 
     /// <summary>
     /// The molar heat capacity of this gas, in J/(K * mol).

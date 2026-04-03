@@ -347,6 +347,9 @@ public abstract partial class SharedCryoPodSystem : EntitySystem
     /// </param>
     public void TryInject(Entity<CryoPodComponent> cryoPod, FixedPoint2 transferAmount)
     {
+        if (transferAmount <= FixedPoint2.Zero)
+            return;
+
         var patient = cryoPod.Comp.BodyContainer.ContainedEntity;
         if (patient == null)
             return; // Refuse to inject if there is no patient.
