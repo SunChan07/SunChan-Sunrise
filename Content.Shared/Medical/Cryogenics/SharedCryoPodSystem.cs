@@ -207,7 +207,7 @@ public abstract partial class SharedCryoPodSystem : EntitySystem
         else
         {
             RemComp<ActiveCryoPodComponent>(ent);
-            UI.CloseUi(ent.Owner, HealthAnalyzerUiKey.Key);
+            UI.CloseUi(ent.Owner, CryoPodUiKey.Key);
         }
 
         UpdateAppearance(ent.Owner, ent.Comp);
