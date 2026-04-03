@@ -209,6 +209,9 @@ namespace Content.Server.Atmos.EntitySystems
                     (tile.Air, tile.Space) = GetDefaultMapAtmosphere(mapAtmos);
                     tile.MapAtmosphere = true;
                     ent.Comp1.MapTiles.Add(tile);
+                    // Sunrise edit
+                    UpdateAdjacentTiles(ent, tile, activate: true);
+                    InvalidateVisuals(ent, tile);
                 }
 
                 DebugTools.AssertNotNull(tile.Air);
