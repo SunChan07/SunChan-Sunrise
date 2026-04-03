@@ -68,7 +68,11 @@ namespace Content.Server.Atmos.EntitySystems
             {
                 atmosphere.CurrentRunInvalidatedTiles.Clear();
                 atmosphere.CurrentRunInvalidatedTiles.EnsureCapacity(atmosphere.InvalidatedCoords.Count);
-                foreach (var indices in atmosphere.InvalidatedCoords)
+                // Snapshot and clear before iterating to prevent InvalidOperationException if
+                // UpdateTileData modifies InvalidatedCoords during enumeration.
+                var invalidatedSnapshot = atmosphere.InvalidatedCoords.ToArray();
+                atmosphere.InvalidatedCoords.Clear();
+                foreach (var indices in invalidatedSnapshot)
                 {
                     var tile = GetOrNewTile(uid, atmosphere, indices, invalidateNew: false);
                     atmosphere.CurrentRunInvalidatedTiles.Enqueue(tile);
@@ -76,7 +80,6 @@ namespace Content.Server.Atmos.EntitySystems
                     // Update tile.IsSpace and tile.MapAtmosphere, and tile.AirtightData.
                     UpdateTileData(ent, mapAtmos, tile);
                 }
-                atmosphere.InvalidatedCoords.Clear();
 
                 if (_simulationStopwatch.Elapsed.TotalMilliseconds >= AtmosMaxProcessTime)
                     return false;
