@@ -179,7 +179,7 @@ public sealed class SandboxUIController : UIController, IOnStateChanged<Gameplay
         system.SandboxDisabled += CloseAll;
         system.SandboxEnabled += CheckSandboxVisibility;
         system.SandboxDisabled += CheckSandboxVisibility;
-        system.ThermalVisionChanged += OnThermalVisionChanged; // Sunrise-edit
+        system.ThermalVisionChanged += OnThermalVisionChanged;
     }
 
     public void OnSystemUnloaded(SandboxSystem system)
