@@ -60,6 +60,11 @@ namespace Content.Client.Sandbox
         private void SetAllowed(bool sandboxEnabled)
         {
             _sandboxEnabled = sandboxEnabled;
+            if (!sandboxEnabled && ThermalVisionActive)
+            {
+                ThermalVisionActive = false;
+                ThermalVisionChanged?.Invoke();
+            }
             CheckStatus();
         }
 
@@ -81,6 +86,17 @@ namespace Content.Client.Sandbox
         public void Suicide()
         {
             RaiseNetworkEvent(new MsgSandboxSuicide());
+        }
+
+        // Sunrise-edit:
+        public bool ThermalVisionActive { get; private set; }
+        public event Action? ThermalVisionChanged;
+
+        public void ThermalVision()
+        {
+            ThermalVisionActive = !ThermalVisionActive;
+            ThermalVisionChanged?.Invoke();
+            RaiseNetworkEvent(new MsgSandboxThermalVision());
         }
 
         public bool Copy(ICommonSession? session, EntityCoordinates coords, EntityUid uid)

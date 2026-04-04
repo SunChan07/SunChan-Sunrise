@@ -142,6 +142,8 @@ public sealed class SandboxUIController : UIController, IOnStateChanged<Gameplay
         _window.RespawnButton.OnPressed += _ => _sandbox.Respawn();
         _window.SpawnTilesButton.OnPressed += _ => TileSpawningController.ToggleWindow();
         _window.SpawnEntitiesButton.OnPressed += _ => EntitySpawningController.ToggleWindow();
+
+_window.ThermalVisionButton.OnPressed += _ => _sandbox.ThermalVision();
         _window.SpawnDecalsButton.OnPressed += _ => DecalPlacerController.ToggleWindow();
         _window.GiveFullAccessButton.OnPressed += _ => _sandbox.GiveAdminAccess();
         _window.GiveAghostButton.OnPressed += _ => _sandbox.GiveAGhost();
@@ -178,6 +180,7 @@ public sealed class SandboxUIController : UIController, IOnStateChanged<Gameplay
         system.SandboxDisabled += CloseAll;
         system.SandboxEnabled += CheckSandboxVisibility;
         system.SandboxDisabled += CheckSandboxVisibility;
+        system.ThermalVisionChanged += OnThermalVisionChanged;
     }
 
     public void OnSystemUnloaded(SandboxSystem system)
@@ -185,6 +188,14 @@ public sealed class SandboxUIController : UIController, IOnStateChanged<Gameplay
         system.SandboxDisabled -= CloseAll;
         system.SandboxEnabled -= CheckSandboxVisibility;
         system.SandboxDisabled -= CheckSandboxVisibility;
+        system.ThermalVisionChanged -= OnThermalVisionChanged;
+    }
+    // Sunrise-edit:
+    private void OnThermalVisionChanged()
+    {
+        if (_window == null)
+            return;
+        _window.ThermalVisionButton.Pressed = _sandbox.ThermalVisionActive;
     }
 
     private void SandboxButtonPressed(ButtonEventArgs args)
