@@ -2,7 +2,7 @@
 
 namespace Content.Client.UserInterface.Systems.Sandbox;
 
-public sealed partial class SandboxUIController
+public partial class SandboxUIController
 {
     public partial void OnThermalVisionChanged()
     {
