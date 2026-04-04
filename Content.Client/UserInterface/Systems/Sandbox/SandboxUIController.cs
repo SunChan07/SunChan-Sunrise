@@ -155,6 +155,7 @@ public sealed partial class SandboxUIController : UIController, IOnStateChanged<
         _window.ToggleSubfloorButton.OnPressed += _ => _sandbox.ToggleSubFloor();
         _window.ShowMarkersButton.OnPressed += _ => _sandbox.ShowMarkers();
         _window.ShowBbButton.OnPressed += _ => _sandbox.ShowBb();
+        _window.ThermalVisionButton.OnPressed += _ => _sandbox.ThermalVision(); // Sunrise-edit
     }
 
     private void CheckSandboxVisibility()
