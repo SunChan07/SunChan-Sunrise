@@ -10,7 +10,7 @@ namespace Content.Client.Sandbox
         public bool ThermalVisionActive { get; private set; }
         public event Action? ThermalVisionChanged;
 
-        partial void ThermalVision()
+        public partial void ThermalVision()
         {
             ThermalVisionActive = !ThermalVisionActive;
             ThermalVisionChanged?.Invoke();
