@@ -20,6 +20,31 @@ using Content.Shared._Sunrise.Sandbox;
 
 namespace Content.Server.Sandbox
 {
+    // Sunrise-edit:
+    public sealed partial class SandboxSystem : SharedSandboxSystem
+
+        partial void SandboxThermalVisionHandler(MsgSandboxThermalVision ev, EntitySessionEventArgs args)
+        {
+            var player = args.SenderSession.AttachedEntity;
+            if (player is null)
+                return;
+
+            if (HasComp<ThermalVisionComponent>(player.Value))
+                RemCompDeferred<ThermalVisionComponent>(player.Value);
+            else
+                EnsureComp<ThermalVisionComponent>(player.Value);
+        }
+
+        partial void ClearAllSandboxThermalVision()
+        {
+            var query = EntityQueryEnumerator<SandboxThermalVisionMarkerComponent>();
+            while (query.MoveNext(out var uid, out _))
+            {
+                RemComp<SandboxThermalVisionMarkerComponent>(uid);
+                RemCompDeferred<ThermalVisionComponent>(uid);
+            }
+        }
+
     public sealed partial class SandboxSystem : SharedSandboxSystem
     {
         [Dependency] private readonly IPlayerManager _playerManager = default!;
@@ -102,38 +127,6 @@ namespace Content.Server.Sandbox
 
             RaiseNetworkEvent(new MsgSandboxStatus { SandboxAllowed = IsSandboxEnabled }, e.Session.Channel);
         }
-
-        // Sunrise-start
-        partial void SandboxThermalVisionHandler(MsgSandboxThermalVision ev, EntitySessionEventArgs args)
-        {
-            var player = args.SenderSession.AttachedEntity;
-            if (player is null)
-                return;
-
-            if (HasComp<ThermalVisionComponent>(player.Value))
-                RemCompDeferred<ThermalVisionComponent>(player.Value);
-            else
-                EnsureComp<ThermalVisionComponent>(player.Value);
-        }
-
-        partial void SyncThermalVision(EntityUid player)
-        {
-            if (HasComp<SandboxThermalVisionMarkerComponent>(player))
-                EnsureComp<ThermalVisionComponent>(player);
-            else
-                RemCompDeferred<ThermalVisionComponent>(player);
-        }
-
-        partial void ClearAllSandboxThermalVision()
-        {
-            var query = EntityQueryEnumerator<SandboxThermalVisionMarkerComponent>();
-            while (query.MoveNext(out var uid, out _))
-            {
-                RemComp<SandboxThermalVisionMarkerComponent>(uid);
-                RemCompDeferred<ThermalVisionComponent>(uid);
-            }
-        }
-        // Sunrise-end
 
         private void SandboxRespawnReceived(MsgSandboxRespawn message, EntitySessionEventArgs args)
         {

@@ -189,13 +189,6 @@ public sealed class SandboxUIController : UIController, IOnStateChanged<Gameplay
         system.SandboxDisabled -= CheckSandboxVisibility;
         system.ThermalVisionChanged -= OnThermalVisionChanged;
     }
-    // Sunrise-edit:
-    partial void OnThermalVisionChanged()
-    {
-        if (_window == null)
-            return;
-        _window.ThermalVisionButton.Pressed = _sandbox.ThermalVisionActive;
-    }
 
     private void SandboxButtonPressed(ButtonEventArgs args)
     {
@@ -241,4 +234,13 @@ public sealed class SandboxUIController : UIController, IOnStateChanged<Gameplay
     }
 
     #endregion
+
+    public sealed class SandboxUIController : UIController, IOnStateChanged<GameplayState>, IOnSystemChanged<SandboxSystem>
+        // Sunrise-edit:
+    partial void OnThermalVisionChanged()
+    {
+        if (_window == null)
+            return;
+        _window.ThermalVisionButton.Pressed = _sandbox.ThermalVisionActive;
+    }
 }
