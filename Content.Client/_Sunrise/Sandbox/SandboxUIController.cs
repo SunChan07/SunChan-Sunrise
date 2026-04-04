@@ -5,6 +5,7 @@ namespace Content.Client.UserInterface.Systems.Sandbox;
 public partial class SandboxUIController
 {
     private partial void OnThermalVisionChanged()
+    {
         if (_window == null)
             return;
 
