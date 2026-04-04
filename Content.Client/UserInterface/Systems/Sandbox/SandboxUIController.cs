@@ -108,11 +108,6 @@ public sealed partial class SandboxUIController : UIController, IOnStateChanged<
         SandboxButton.OnPressed += SandboxButtonPressed;
     }
 
-    public void EnsureWindow()
-    {
-        _window.ThermalVisionButton.OnPressed += _ => _sandbox.ThermalVision(); // Sunrise-edit
-    }
-
     private void EnsureWindow()
     {
         if (_window is { Disposed: false })
@@ -162,72 +157,79 @@ public sealed partial class SandboxUIController : UIController, IOnStateChanged<
         _window.ShowBbButton.OnPressed += _ => _sandbox.ShowBb();
     }
 
-    private void CheckSandboxVisibility()
+    private SandboxWindow EnsureWindow()
     {
-        if (SandboxButton == null)
-            return;
 
-        SandboxButton.Visible = _sandbox.SandboxAllowed;
-    }
-
-    public void OnStateExited(GameplayState state)
-    {
-        if (_window != null)
+        private void CheckSandboxVisibility()
         {
-            _window.Close();
-            _window = null;
+            if (SandboxButton == null)
+                return;
+
+            SandboxButton.Visible = _sandbox.SandboxAllowed;
         }
 
-        CommandBinds.Unregister<SandboxSystem>();
-    }
-
-    public void OnSystemLoaded(SandboxSystem system)
-    {
-        system.SandboxDisabled += CloseAll;
-        system.SandboxEnabled += CheckSandboxVisibility;
-        system.SandboxDisabled += CheckSandboxVisibility;
-        system.ThermalVisionChanged += OnThermalVisionChanged; // Sunrise-edit
-    }
-
-    public void OnSystemUnloaded(SandboxSystem system)
-    {
-        system.SandboxDisabled -= CloseAll;
-        system.SandboxEnabled -= CheckSandboxVisibility;
-        system.SandboxDisabled -= CheckSandboxVisibility;
-        system.ThermalVisionChanged -= OnThermalVisionChanged; // Sunrise-edit
-    }
-
-    private void SandboxButtonPressed(ButtonEventArgs args)
-    {
-        ToggleWindow();
-    }
-
-    private void CloseAll()
-    {
-        _window?.Close();
-        EntitySpawningController.CloseWindow();
-        TileSpawningController.CloseWindow();
-    }
-
-    private bool Copy(ICommonSession? session, EntityCoordinates coords, EntityUid uid)
-    {
-        return _sandbox.Copy(session, coords, uid);
-    }
-
-    private void ToggleWindow()
-    {
-        if (_window == null)
-            return;
-        if (_sandbox.SandboxAllowed && _window.IsOpen != true)
+        public void OnStateExited(GameplayState state)
         {
-            UIManager.ClickSound();
-            _window.Open();
+            if (_window != null)
+            {
+                _window.Close();
+                _window = null;
+            }
+
+            CommandBinds.Unregister<SandboxSystem>();
         }
-        else
+
+        public void OnSystemLoaded(SandboxSystem system)
         {
-            UIManager.ClickSound();
-            _window.Close();
+            system.SandboxDisabled += CloseAll;
+            system.SandboxEnabled += CheckSandboxVisibility;
+            system.SandboxDisabled += CheckSandboxVisibility;
+            system.ThermalVisionChanged += OnThermalVisionChanged; // Sunrise-edit
         }
+
+        public void OnSystemUnloaded(SandboxSystem system)
+        {
+            system.SandboxDisabled -= CloseAll;
+            system.SandboxEnabled -= CheckSandboxVisibility;
+            system.SandboxDisabled -= CheckSandboxVisibility;
+            system.ThermalVisionChanged -= OnThermalVisionChanged; // Sunrise-edit
+        }
+
+        private void SandboxButtonPressed(ButtonEventArgs args)
+        {
+            ToggleWindow();
+        }
+
+        private void CloseAll()
+        {
+            _window?.Close();
+            EntitySpawningController.CloseWindow();
+            TileSpawningController.CloseWindow();
+        }
+
+        private bool Copy(ICommonSession? session, EntityCoordinates coords, EntityUid uid)
+        {
+            return _sandbox.Copy(session, coords, uid);
+        }
+
+        private void ToggleWindow()
+        {
+            if (_window == null)
+                return;
+            if (_sandbox.SandboxAllowed && _window.IsOpen != true)
+            {
+                UIManager.ClickSound();
+                _window.Open();
+            }
+            else
+            {
+                UIManager.ClickSound();
+                _window.Close();
+            }
+        }
+
+        AfterEnsureWindow();
+        return _window;
     }
 
     #region Buttons
@@ -239,7 +241,6 @@ public sealed partial class SandboxUIController : UIController, IOnStateChanged<
 
         _window.ToggleSubfloorButton.Pressed = value;
     }
-
     partial void OnThermalVisionChanged(); // Sunrise-edit
 
     #endregion
@@ -247,7 +248,11 @@ public sealed partial class SandboxUIController : UIController, IOnStateChanged<
 
 public partial class SandboxUIController : UIController, IOnStateChanged<GameplayState>, IOnSystemChanged<SandboxSystem>
 {
-    // Sunrise-edit:
+    partial void AfterEnsureWindow();
+    {
+        _window!.ThermalVisionButton.OnPressed += _ => _sandbox.ThermalVision();
+    }
+
     partial void OnThermalVisionChanged()
     {
         if (_window == null)
