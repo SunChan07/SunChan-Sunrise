@@ -39,6 +39,7 @@ namespace Content.Server.Sandbox
         {
             get => _isSandboxEnabled;
             set
+            // Sunrise-edit:
             {
                 _isSandboxEnabled = value;
                 if (!value)
@@ -103,7 +104,7 @@ namespace Content.Server.Sandbox
         }
 
         // Sunrise-start
-        private void SandboxThermalVisionHandler(MsgSandboxThermalVision ev, EntitySessionEventArgs args)
+        partial void SandboxThermalVisionHandler(MsgSandboxThermalVision ev, EntitySessionEventArgs args)
         {
             var player = args.SenderSession.AttachedEntity;
             if (player is null)
@@ -115,7 +116,7 @@ namespace Content.Server.Sandbox
                 EnsureComp<ThermalVisionComponent>(player.Value);
         }
 
-        private void SyncThermalVision(EntityUid player)
+        partial void SyncThermalVision(EntityUid player)
         {
             if (HasComp<SandboxThermalVisionMarkerComponent>(player))
                 EnsureComp<ThermalVisionComponent>(player);
@@ -123,7 +124,7 @@ namespace Content.Server.Sandbox
                 RemCompDeferred<ThermalVisionComponent>(player);
         }
 
-        private void ClearAllSandboxThermalVision()
+        partial void ClearAllSandboxThermalVision()
         {
             var query = EntityQueryEnumerator<SandboxThermalVisionMarkerComponent>();
             while (query.MoveNext(out var uid, out _))
@@ -200,10 +201,7 @@ namespace Content.Server.Sandbox
             {
                 var card = Spawn("CaptainIDCard", Transform(attached).Coordinates);
                 UpgradeId(card);
-                if (TryComp<IdCardComponent>(card, out var idComp))
-                {
-                    idComp.FullName = MetaData(attached).EntityName;
-                }
+                Comp<IdCardComponent>(card).FullName = MetaData(attached).EntityName;
                 return card;
             }
         }
