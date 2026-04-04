@@ -9,7 +9,7 @@ using Robust.Shared.Player;
 
 namespace Content.Client.Sandbox
 {
-    public sealed class SandboxSystem : SharedSandboxSystem
+    public sealed partial class SandboxSystem : SharedSandboxSystem
     {
         [Dependency] private readonly IClientAdminManager _adminManager = default!;
         [Dependency] private readonly IClientConsoleHost _consoleHost = default!;
@@ -158,6 +158,8 @@ namespace Content.Client.Sandbox
         {
             _consoleHost.ExecuteCommand("showmarkers");
         }
+
+        partial void ThermalVision(); // Sunrise-edit
 
         public void ShowBb()
         {

@@ -21,7 +21,7 @@ using Content.Shared._Sunrise.Sandbox;
 
 namespace Content.Server.Sandbox
 {
-    public sealed class SandboxSystem : SharedSandboxSystem
+    public sealed partial class SandboxSystem : SharedSandboxSystem
     {
         [Dependency] private readonly IPlayerManager _playerManager = default!;
         [Dependency] private readonly IPlacementManager _placementManager = default!;
@@ -48,6 +48,9 @@ namespace Content.Server.Sandbox
                 UpdateSandboxStatusForAll();
             }
         }
+        // Sunrise edit:
+        partial void SandboxThermalVisionHandler(MsgSandboxThermalVision ev, EntitySessionEventArgs args);
+        partial void ClearAllSandboxThermalVision();
 
         public override void Initialize()
         {
