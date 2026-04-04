@@ -1,7 +1,4 @@
-﻿using Content.Client.UserInterface.Systems.Sandbox;
-using Content.Client.UserInterface.Systems.Sandbox.Windows;
-using Content.Client.UserInterface.States;
-using Robust.Client.UserInterface.Controllers;
+﻿using Content.Client.UserInterface.Systems.Sandbox.Windows;
 
 namespace Content.Client.UserInterface.Systems.Sandbox;
 
