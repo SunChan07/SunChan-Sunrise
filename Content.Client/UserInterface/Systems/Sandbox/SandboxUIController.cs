@@ -180,6 +180,7 @@ _window.ThermalVisionButton.OnPressed += _ => _sandbox.ThermalVision();
         system.SandboxDisabled += CloseAll;
         system.SandboxEnabled += CheckSandboxVisibility;
         system.SandboxDisabled += CheckSandboxVisibility;
+        system.ThermalVisionChanged += OnThermalVisionChanged;
     }
 
     public void OnSystemUnloaded(SandboxSystem system)
@@ -187,6 +188,14 @@ _window.ThermalVisionButton.OnPressed += _ => _sandbox.ThermalVision();
         system.SandboxDisabled -= CloseAll;
         system.SandboxEnabled -= CheckSandboxVisibility;
         system.SandboxDisabled -= CheckSandboxVisibility;
+        system.ThermalVisionChanged -= OnThermalVisionChanged;
+    }
+
+    private void OnThermalVisionChanged()
+    {
+        if (_window == null)
+            return;
+        _window.ThermalVisionButton.Pressed = _sandbox.ThermalVisionActive;
     }
 
     private void SandboxButtonPressed(ButtonEventArgs args)
