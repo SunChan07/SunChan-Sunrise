@@ -108,6 +108,11 @@ public sealed partial class SandboxUIController : UIController, IOnStateChanged<
         SandboxButton.OnPressed += SandboxButtonPressed;
     }
 
+    public void EnsureWindow()
+    {
+        _window.ThermalVisionButton.OnPressed += _ => _sandbox.ThermalVision(); // Sunrise-edit
+    }
+
     private void EnsureWindow()
     {
         if (_window is { Disposed: false })
@@ -145,7 +150,6 @@ public sealed partial class SandboxUIController : UIController, IOnStateChanged<
         _window.RespawnButton.OnPressed += _ => _sandbox.Respawn();
         _window.SpawnTilesButton.OnPressed += _ => TileSpawningController.ToggleWindow();
         _window.SpawnEntitiesButton.OnPressed += _ => EntitySpawningController.ToggleWindow();
-        _window.ThermalVisionButton.OnPressed += _ => _sandbox.ThermalVision(); // Sunrise-edit
         _window.SpawnDecalsButton.OnPressed += _ => DecalPlacerController.ToggleWindow();
         _window.GiveFullAccessButton.OnPressed += _ => _sandbox.GiveAdminAccess();
         _window.GiveAghostButton.OnPressed += _ => _sandbox.GiveAGhost();
