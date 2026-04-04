@@ -159,7 +159,7 @@ namespace Content.Client.Sandbox
             _consoleHost.ExecuteCommand("showmarkers");
         }
 
-        partial void ThermalVision(); // Sunrise-edit
+        public partial void ThermalVision(); // Sunrise-edit
 
         public void ShowBb()
         {
