@@ -15,12 +15,10 @@ using Robust.Server.Player;
 using Robust.Shared.Enums;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
-using Content.Shared._Sunrise.ThermalVision;
-using Content.Shared._Sunrise.Sandbox;
 
 namespace Content.Server.Sandbox
 {
-    public sealed partial class SandboxSystem : SharedSandboxSystem
+    public sealed class SandboxSystem : SharedSandboxSystem
     {
         [Dependency] private readonly IPlayerManager _playerManager = default!;
         [Dependency] private readonly IPlacementManager _placementManager = default!;
@@ -41,8 +39,6 @@ namespace Content.Server.Sandbox
             set
             {
                 _isSandboxEnabled = value;
-                if (!value)
-                    ClearAllSandboxThermalVision();
                 UpdateSandboxStatusForAll();
             }
         }
@@ -50,12 +46,11 @@ namespace Content.Server.Sandbox
         public override void Initialize()
         {
             base.Initialize();
-
             SubscribeNetworkEvent<MsgSandboxRespawn>(SandboxRespawnReceived);
             SubscribeNetworkEvent<MsgSandboxGiveAccess>(SandboxGiveAccessReceived);
             SubscribeNetworkEvent<MsgSandboxGiveAghost>(SandboxGiveAghostReceived);
             SubscribeNetworkEvent<MsgSandboxSuicide>(SandboxSuicideReceived);
-            SubscribeNetworkEvent<MsgSandboxThermalVision>(SandboxThermalVisionHandler);
+
             SubscribeLocalEvent<GameRunLevelChangedEvent>(GameTickerOnOnRunLevelChanged);
 
             _playerManager.PlayerStatusChanged += OnPlayerStatusChanged;
@@ -88,6 +83,7 @@ namespace Content.Server.Sandbox
 
         private void GameTickerOnOnRunLevelChanged(GameRunLevelChangedEvent obj)
         {
+            // Automatically clear sandbox state when round resets.
             if (obj.New == GameRunLevel.PreRoundLobby)
             {
                 IsSandboxEnabled = false;
@@ -100,36 +96,6 @@ namespace Content.Server.Sandbox
                 return;
 
             RaiseNetworkEvent(new MsgSandboxStatus { SandboxAllowed = IsSandboxEnabled }, e.Session.Channel);
-        }
-
-        private void SandboxThermalVisionHandler(MsgSandboxThermalVision ev, EntitySessionEventArgs args)
-        {
-            var player = args.SenderSession.AttachedEntity;
-            if (player is null)
-                return;
-
-            if (HasComp<ThermalVisionComponent>(player.Value))
-                RemCompDeferred<ThermalVisionComponent>(player.Value);
-            else
-                EnsureComp<ThermalVisionComponent>(player.Value);
-        }
-
-        private void SyncThermalVision(EntityUid player)
-        {
-            if (HasComp<SandboxThermalVisionMarkerComponent>(player))
-                EnsureComp<ThermalVisionComponent>(player);
-            else
-                RemCompDeferred<ThermalVisionComponent>(player);
-        }
-
-        private void ClearAllSandboxThermalVision()
-        {
-            var query = EntityQueryEnumerator<SandboxThermalVisionMarkerComponent>();
-            while (query.MoveNext(out var uid, out _))
-            {
-                RemComp<SandboxThermalVisionMarkerComponent>(uid);
-                RemCompDeferred<ThermalVisionComponent>(uid);
-            }
         }
 
         private void SandboxRespawnReceived(MsgSandboxRespawn message, EntitySessionEventArgs args)
@@ -198,10 +164,8 @@ namespace Content.Server.Sandbox
             {
                 var card = Spawn("CaptainIDCard", Transform(attached).Coordinates);
                 UpgradeId(card);
-                if (TryComp<IdCardComponent>(card, out var idComp))
-                {
-                    idComp.FullName = MetaData(attached).EntityName;
-                }
+
+                Comp<IdCardComponent>(card).FullName = MetaData(attached).EntityName;
                 return card;
             }
         }
@@ -212,6 +176,7 @@ namespace Content.Server.Sandbox
                 return;
 
             var player = _playerManager.GetSessionByChannel(args.SenderSession.Channel);
+
             _host.ExecuteCommand(player, _conGroupController.CanCommand(player, "aghost") ? "aghost" : "ghost");
         }
 
