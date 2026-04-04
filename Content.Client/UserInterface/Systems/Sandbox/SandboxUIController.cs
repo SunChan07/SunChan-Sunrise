@@ -236,7 +236,7 @@ public sealed partial class SandboxUIController : UIController, IOnStateChanged<
         _window.ToggleSubfloorButton.Pressed = value;
     }
 
-    partial void OnThermalVisionChanged(); // Sunrise-edit
+    public partial void OnThermalVisionChanged(); // Sunrise-edit
 
     #endregion
 }
