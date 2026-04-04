@@ -89,17 +89,6 @@ namespace Content.Client.Sandbox
             RaiseNetworkEvent(new MsgSandboxSuicide());
         }
 
-        // Sunrise-edit:
-        public bool ThermalVisionActive { get; private set; }
-        public event Action? ThermalVisionChanged;
-
-        partial void ThermalVision()
-        {
-            ThermalVisionActive = !ThermalVisionActive;
-            ThermalVisionChanged?.Invoke();
-            RaiseNetworkEvent(new MsgSandboxThermalVision());
-        }
-
         public bool Copy(ICommonSession? session, EntityCoordinates coords, EntityUid uid)
         {
             if (!SandboxAllowed)

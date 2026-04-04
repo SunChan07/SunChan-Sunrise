@@ -43,11 +43,14 @@ public sealed class SandboxUIController : UIController, IOnStateChanged<Gameplay
     private SandboxWindow? _window;
 
     // TODO hud refactor cache
-    private EntitySpawningUIController EntitySpawningController => UIManager.GetUIController<EntitySpawningUIController>();
+    private EntitySpawningUIController EntitySpawningController =>
+        UIManager.GetUIController<EntitySpawningUIController>();
+
     private TileSpawningUIController TileSpawningController => UIManager.GetUIController<TileSpawningUIController>();
     private DecalPlacerUIController DecalPlacerController => UIManager.GetUIController<DecalPlacerUIController>();
 
-    private MenuButton? SandboxButton => UIManager.GetActiveUIWidgetOrNull<MenuBar.Widgets.GameTopMenuBar>()?.SandboxButton;
+    private MenuButton? SandboxButton =>
+        UIManager.GetActiveUIWidgetOrNull<MenuBar.Widgets.GameTopMenuBar>()?.SandboxButton;
 
     public void OnStateEntered(GameplayState state)
     {
@@ -179,7 +182,7 @@ public sealed class SandboxUIController : UIController, IOnStateChanged<Gameplay
         system.SandboxDisabled += CloseAll;
         system.SandboxEnabled += CheckSandboxVisibility;
         system.SandboxDisabled += CheckSandboxVisibility;
-        system.ThermalVisionChanged += OnThermalVisionChanged;
+        system.ThermalVisionChanged += OnThermalVisionChanged; // Sunrise-edit
     }
 
     public void OnSystemUnloaded(SandboxSystem system)
@@ -187,7 +190,7 @@ public sealed class SandboxUIController : UIController, IOnStateChanged<Gameplay
         system.SandboxDisabled -= CloseAll;
         system.SandboxEnabled -= CheckSandboxVisibility;
         system.SandboxDisabled -= CheckSandboxVisibility;
-        system.ThermalVisionChanged -= OnThermalVisionChanged;
+        system.ThermalVisionChanged -= OnThermalVisionChanged; // Sunrise-edit
     }
 
     private void SandboxButtonPressed(ButtonEventArgs args)
@@ -234,15 +237,16 @@ public sealed class SandboxUIController : UIController, IOnStateChanged<Gameplay
     }
 
     #endregion
+}
 
-    public sealed class SandboxUIController : UIController, IOnStateChanged<GameplayState>, IOnSystemChanged<SandboxSystem>
+public partial class SandboxUIController : UIController, IOnStateChanged<GameplayState>, IOnSystemChanged<SandboxSystem>
+{
+    // Sunrise-edit:
+    partial void OnThermalVisionChanged()
     {
-        // Sunrise-edit:
-        partial void OnThermalVisionChanged()
-        {
-            if (_window == null)
-                return;
-            _window.ThermalVisionButton.Pressed = _sandbox.ThermalVisionActive;
-        }
+        if (_window == null)
+            return;
+        _window.ThermalVisionButton.Pressed = _sandbox.ThermalVisionActive;
     }
 }
+

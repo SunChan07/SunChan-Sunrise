@@ -15,39 +15,13 @@ using Robust.Server.Player;
 using Robust.Shared.Enums;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
+// Sunrise-edit:
 using Content.Shared._Sunrise.ThermalVision;
 using Content.Shared._Sunrise.Sandbox;
 
 namespace Content.Server.Sandbox
 {
-    // Sunrise-edit:
-    public sealed partial class SandboxSystem : SharedSandboxSystem
-    {
-
-        partial void SandboxThermalVisionHandler(MsgSandboxThermalVision ev, EntitySessionEventArgs args)
-        {
-            var player = args.SenderSession.AttachedEntity;
-            if (player is null)
-                return;
-
-            if (HasComp<ThermalVisionComponent>(player.Value))
-                RemCompDeferred<ThermalVisionComponent>(player.Value);
-            else
-                EnsureComp<ThermalVisionComponent>(player.Value);
-        }
-
-        partial void ClearAllSandboxThermalVision()
-        {
-            var query = EntityQueryEnumerator<SandboxThermalVisionMarkerComponent>();
-            while (query.MoveNext(out var uid, out _))
-            {
-                RemComp<SandboxThermalVisionMarkerComponent>(uid);
-                RemCompDeferred<ThermalVisionComponent>(uid);
-            }
-        }
-    }
-
-public sealed partial class SandboxSystem : SharedSandboxSystem
+    public sealed class SandboxSystem : SharedSandboxSystem
     {
         [Dependency] private readonly IPlayerManager _playerManager = default!;
         [Dependency] private readonly IPlacementManager _placementManager = default!;
@@ -83,7 +57,7 @@ public sealed partial class SandboxSystem : SharedSandboxSystem
             SubscribeNetworkEvent<MsgSandboxGiveAccess>(SandboxGiveAccessReceived);
             SubscribeNetworkEvent<MsgSandboxGiveAghost>(SandboxGiveAghostReceived);
             SubscribeNetworkEvent<MsgSandboxSuicide>(SandboxSuicideReceived);
-            SubscribeNetworkEvent<MsgSandboxThermalVision>(SandboxThermalVisionHandler);
+            SubscribeNetworkEvent<MsgSandboxThermalVision>(SandboxThermalVisionHandler); // Sunrise edit
             SubscribeLocalEvent<GameRunLevelChangedEvent>(GameTickerOnOnRunLevelChanged);
 
             _playerManager.PlayerStatusChanged += OnPlayerStatusChanged;
