@@ -10,29 +10,29 @@ using Content.Shared._Sunrise.ThermalVision;
 using Content.Shared._Sunrise.Sandbox;
 
 namespace Content.Server.Sandbox
-
-// Sunrise-edit:
-public partial class SandboxSystem : SharedSandboxSystem
 {
-    partial void SandboxThermalVisionHandler(MsgSandboxThermalVision ev, EntitySessionEventArgs args)
+    public partial class SandboxSystem : SharedSandboxSystem
     {
-        var player = args.SenderSession.AttachedEntity;
-        if (player is null)
-            return;
-
-        if (HasComp<ThermalVisionComponent>(player.Value))
-            RemCompDeferred<ThermalVisionComponent>(player.Value);
-        else
-            EnsureComp<ThermalVisionComponent>(player.Value);
-    }
-
-    partial void ClearAllSandboxThermalVision()
-    {
-        var query = EntityQueryEnumerator<SandboxThermalVisionMarkerComponent>();
-        while (query.MoveNext(out var uid, out _))
+        partial void SandboxThermalVisionHandler(MsgSandboxThermalVision ev, EntitySessionEventArgs args)
         {
-            RemComp<SandboxThermalVisionMarkerComponent>(uid);
-            RemCompDeferred<ThermalVisionComponent>(uid);
+            var player = args.SenderSession.AttachedEntity;
+            if (player is null)
+                return;
+
+            if (HasComp<ThermalVisionComponent>(player.Value))
+                RemCompDeferred<ThermalVisionComponent>(player.Value);
+            else
+                EnsureComp<ThermalVisionComponent>(player.Value);
+        }
+
+        partial void ClearAllSandboxThermalVision()
+        {
+            var query = EntityQueryEnumerator<SandboxThermalVisionMarkerComponent>();
+            while (query.MoveNext(out var uid, out _))
+            {
+                RemComp<SandboxThermalVisionMarkerComponent>(uid);
+                RemCompDeferred<ThermalVisionComponent>(uid);
+            }
         }
     }
 }

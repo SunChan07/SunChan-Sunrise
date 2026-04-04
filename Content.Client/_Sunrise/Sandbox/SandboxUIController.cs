@@ -4,7 +4,6 @@ namespace Content.Client.UserInterface.Systems.Sandbox;
 
 public partial class SandboxUIController : UIController, IOnStateChanged<GameplayState>, IOnSystemChanged<SandboxSystem>
 {
-    // Sunrise-edit:
     partial void OnThermalVisionChanged()
     {
         if (_window == null)
