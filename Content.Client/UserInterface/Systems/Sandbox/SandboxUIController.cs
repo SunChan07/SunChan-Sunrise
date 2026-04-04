@@ -226,7 +226,7 @@ public sealed partial class SandboxUIController : UIController, IOnStateChanged<
         }
     }
 
-    `#region` Buttons
+    #region Buttons
 
     public void SetToggleSubfloors(bool value)
     {
@@ -238,6 +238,6 @@ public sealed partial class SandboxUIController : UIController, IOnStateChanged<
 
     partial void OnThermalVisionChanged(); // Sunrise-edit
 
-    `#endregion`
+    #endregion
 }
 
