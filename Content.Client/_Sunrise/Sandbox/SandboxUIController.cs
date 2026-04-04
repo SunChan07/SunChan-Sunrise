@@ -9,4 +9,9 @@ public sealed partial class SandboxUIController
             return;
         _window.ThermalVisionButton.Pressed = _sandbox.ThermalVisionActive;
     }
+
+    partial void EnsureWindow()
+    {
+        _window.ThermalVisionButton.OnPressed += _ => _sandbox.ThermalVision();
+    }
 }
