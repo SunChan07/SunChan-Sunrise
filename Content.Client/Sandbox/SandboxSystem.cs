@@ -60,7 +60,6 @@ namespace Content.Client.Sandbox
         private void SetAllowed(bool sandboxEnabled)
         {
             _sandboxEnabled = sandboxEnabled;
-            // Sunrise edit:
             if (!sandboxEnabled && ThermalVisionActive)
             {
                 ThermalVisionActive = false;
@@ -93,7 +92,7 @@ namespace Content.Client.Sandbox
         public bool ThermalVisionActive { get; private set; }
         public event Action? ThermalVisionChanged;
 
-        partial void ThermalVision()
+        public void ThermalVision()
         {
             ThermalVisionActive = !ThermalVisionActive;
             ThermalVisionChanged?.Invoke();

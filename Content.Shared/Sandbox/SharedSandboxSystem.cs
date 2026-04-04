@@ -25,8 +25,7 @@ namespace Content.Shared.Sandbox
         [Serializable, NetSerializable]
         protected sealed class MsgSandboxSuicide : EntityEventArgs {}
 
-        // Sunrise-edit
         [Serializable, NetSerializable]
-        protected partial class MsgSandboxThermalVision : EntityEventArgs {}
+        protected sealed class MsgSandboxThermalVision : EntityEventArgs {}
     }
 }

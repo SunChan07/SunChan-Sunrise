@@ -42,23 +42,20 @@ namespace Content.Server.Sandbox
             {
                 _isSandboxEnabled = value;
                 if (!value)
-                    ClearAllSandboxThermalVision(); // Sunris-edit
+                    ClearAllSandboxThermalVision();
                 UpdateSandboxStatusForAll();
             }
         }
 
-        partial void Initialize()
+        public override void Initialize()
         {
             base.Initialize();
-
-            SubscribeNetworkEvent<MsgSandboxThermalVision>(SandboxThermalVisionHandler);
-
-        public override void Initialize()
 
             SubscribeNetworkEvent<MsgSandboxRespawn>(SandboxRespawnReceived);
             SubscribeNetworkEvent<MsgSandboxGiveAccess>(SandboxGiveAccessReceived);
             SubscribeNetworkEvent<MsgSandboxGiveAghost>(SandboxGiveAghostReceived);
             SubscribeNetworkEvent<MsgSandboxSuicide>(SandboxSuicideReceived);
+            SubscribeNetworkEvent<MsgSandboxThermalVision>(SandboxThermalVisionHandler);
             SubscribeLocalEvent<GameRunLevelChangedEvent>(GameTickerOnOnRunLevelChanged);
 
             _playerManager.PlayerStatusChanged += OnPlayerStatusChanged;
@@ -106,7 +103,7 @@ namespace Content.Server.Sandbox
         }
 
         // Sunrise-start
-        partial void SandboxThermalVisionHandler(MsgSandboxThermalVision ev, EntitySessionEventArgs args)
+        private void SandboxThermalVisionHandler(MsgSandboxThermalVision ev, EntitySessionEventArgs args)
         {
             var player = args.SenderSession.AttachedEntity;
             if (player is null)
@@ -118,7 +115,7 @@ namespace Content.Server.Sandbox
                 EnsureComp<ThermalVisionComponent>(player.Value);
         }
 
-        partial void SyncThermalVision(EntityUid player)
+        private void SyncThermalVision(EntityUid player)
         {
             if (HasComp<SandboxThermalVisionMarkerComponent>(player))
                 EnsureComp<ThermalVisionComponent>(player);
@@ -126,7 +123,7 @@ namespace Content.Server.Sandbox
                 RemCompDeferred<ThermalVisionComponent>(player);
         }
 
-        partial void ClearAllSandboxThermalVision()
+        private void ClearAllSandboxThermalVision()
         {
             var query = EntityQueryEnumerator<SandboxThermalVisionMarkerComponent>();
             while (query.MoveNext(out var uid, out _))
@@ -203,8 +200,10 @@ namespace Content.Server.Sandbox
             {
                 var card = Spawn("CaptainIDCard", Transform(attached).Coordinates);
                 UpgradeId(card);
-
-                Comp<IdCardComponent>(card).FullName = MetaData(attached).EntityName;
+                if (TryComp<IdCardComponent>(card, out var idComp))
+                {
+                    idComp.FullName = MetaData(attached).EntityName;
+                }
                 return card;
             }
         }
