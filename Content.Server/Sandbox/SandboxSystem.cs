@@ -22,6 +22,7 @@ namespace Content.Server.Sandbox
 {
     // Sunrise-edit:
     public sealed partial class SandboxSystem : SharedSandboxSystem
+    {
 
         partial void SandboxThermalVisionHandler(MsgSandboxThermalVision ev, EntitySessionEventArgs args)
         {
@@ -44,8 +45,9 @@ namespace Content.Server.Sandbox
                 RemCompDeferred<ThermalVisionComponent>(uid);
             }
         }
+    }
 
-    public sealed partial class SandboxSystem : SharedSandboxSystem
+public sealed partial class SandboxSystem : SharedSandboxSystem
     {
         [Dependency] private readonly IPlayerManager _playerManager = default!;
         [Dependency] private readonly IPlacementManager _placementManager = default!;
